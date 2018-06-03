@@ -13,12 +13,11 @@ import Icon from "../Icon/Icon";
 import counterpart from "counterpart";
 import "intro.js/introjs.css";
 import guide from "intro.js";
-import PropTypes from "prop-types";
 
 class Footer extends React.Component {
     static propTypes = {
         dynGlobalObject: ChainTypes.ChainObject.isRequired,
-        synced: PropTypes.bool.isRequired
+        synced: React.PropTypes.bool.isRequired
     };
 
     static defaultProps = {
@@ -26,7 +25,7 @@ class Footer extends React.Component {
     };
 
     static contextTypes = {
-        router: PropTypes.object
+        router: React.PropTypes.object
     };
 
     constructor(props) {
@@ -178,9 +177,6 @@ class Footer extends React.Component {
                             <div
                                 className="logo"
                                 style={{
-                                    fontSize: state.newVersion
-                                        ? "0.9em"
-                                        : "1em",
                                     cursor: state.newVersion
                                         ? "pointer"
                                         : "normal",
@@ -199,7 +195,6 @@ class Footer extends React.Component {
                                 {state.newVersion && (
                                     <Icon
                                         name="download"
-                                        title="icons.download"
                                         style={{
                                             marginRight: "20px",
                                             marginTop: "10px",
@@ -210,20 +205,7 @@ class Footer extends React.Component {
                                 )}
                                 <span style={updateStyles}>
                                     <Translate content="footer.title" />
-                                    {__GIT_BRANCH__ === "staging" ? (
-                                        <a
-                                            href={`https://github.com/bitshares/bitshares-ui/commit/${version.trim()}`}
-                                            className="version"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            {version}
-                                        </a>
-                                    ) : (
-                                        <span className="version">
-                                            {version}
-                                        </span>
-                                    )}
+                                    <span className="version">{version}</span>
                                 </span>
 
                                 {state.newVersion && (
@@ -282,16 +264,16 @@ class Footer extends React.Component {
                             </span>
                         ) : null}
                         {block_height ? (
-                            <div className="grid-block shrink">
-                                <div
-                                    onMouseEnter={() => {
-                                        this.setState({showNodesPopup: true});
-                                    }}
-                                    onMouseLeave={() => {
-                                        this.setState({showNodesPopup: false});
-                                    }}
-                                    style={{position: "relative"}}
-                                >
+                            <div
+                                onMouseEnter={() => {
+                                    this.setState({showNodesPopup: true});
+                                }}
+                                onMouseLeave={() => {
+                                    this.setState({showNodesPopup: false});
+                                }}
+                                className="grid-block shrink"
+                            >
+                                <div style={{position: "relative"}}>
                                     <div className="footer-status">
                                         {!connected ? (
                                             <span className="warning">
@@ -390,7 +372,7 @@ class Footer extends React.Component {
         this.context.router.push("/settings/access");
     }
 }
-Footer = BindToChainState(Footer);
+Footer = BindToChainState(Footer, {keep_updating: true});
 
 class AltFooter extends Component {
     render() {

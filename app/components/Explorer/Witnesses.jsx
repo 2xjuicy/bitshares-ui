@@ -12,7 +12,6 @@ import SettingsActions from "actions/SettingsActions";
 import SettingsStore from "stores/SettingsStore";
 import classNames from "classnames";
 import Explorer from "./Explorer";
-import PropTypes from "prop-types";
 
 require("./witnesses.scss");
 
@@ -22,7 +21,7 @@ class WitnessCard extends React.Component {
     };
 
     static contextTypes = {
-        router: PropTypes.object.isRequired
+        router: React.PropTypes.object.isRequired
     };
 
     _onCardClick(e) {
@@ -103,7 +102,7 @@ class WitnessCard extends React.Component {
         );
     }
 }
-WitnessCard = BindToChainState(WitnessCard);
+WitnessCard = BindToChainState(WitnessCard, {keep_updating: true});
 
 class WitnessRow extends React.Component {
     static propTypes = {
@@ -111,7 +110,7 @@ class WitnessRow extends React.Component {
     };
 
     static contextTypes = {
-        router: PropTypes.object.isRequired
+        router: React.PropTypes.object.isRequired
     };
 
     _onRowClick(e) {
@@ -179,7 +178,7 @@ class WitnessRow extends React.Component {
         );
     }
 }
-WitnessRow = BindToChainState(WitnessRow);
+WitnessRow = BindToChainState(WitnessRow, {keep_updating: true});
 
 class WitnessList extends React.Component {
     static propTypes = {
@@ -381,6 +380,7 @@ class WitnessList extends React.Component {
     }
 }
 WitnessList = BindToChainState(WitnessList, {
+    keep_updating: true,
     show_loader: true
 });
 
@@ -573,7 +573,7 @@ class Witnesses extends React.Component {
         return <Explorer tab="witnesses" content={content} />;
     }
 }
-Witnesses = BindToChainState(Witnesses);
+Witnesses = BindToChainState(Witnesses, {keep_updating: true});
 
 class WitnessStoreWrapper extends React.Component {
     render() {

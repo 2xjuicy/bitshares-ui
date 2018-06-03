@@ -1,6 +1,5 @@
-import {hot} from "react-hot-loader";
-import React from "react";
 import {ChainStore} from "bitsharesjs/es";
+import React from "react";
 import IntlStore from "stores/IntlStore";
 import AccountStore from "stores/AccountStore";
 import SettingsStore from "stores/SettingsStore";
@@ -14,6 +13,7 @@ import SyncError from "./components/SyncError";
 import LoadingIndicator from "./components/LoadingIndicator";
 import BrowserNotifications from "./components/BrowserNotifications/BrowserNotificationsContainer";
 import Header from "components/Layout/Header";
+// import MobileMenu from "components/Layout/MobileMenu";
 import ReactTooltip from "react-tooltip";
 import NotificationSystem from "react-notification-system";
 import TransactionConfirm from "./components/Blockchain/TransactionConfirm";
@@ -24,9 +24,6 @@ import Deprecate from "./Deprecate";
 import WalletManagerStore from "stores/WalletManagerStore";
 import Incognito from "./components/Layout/Incognito";
 import {isIncognito} from "feature_detect";
-import {updateGatewayBackers} from "common/gatewayUtils";
-import titleUtils from "common/titleUtils";
-import PropTypes from "prop-types";
 
 class App extends React.Component {
     constructor(props) {
@@ -129,19 +126,6 @@ class App extends React.Component {
             function(incognito) {
                 this.setState({incognito});
             }.bind(this)
-        );
-        updateGatewayBackers();
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.location !== prevProps.location) {
-            this.onRouteChanged();
-        }
-    }
-
-    onRouteChanged() {
-        document.title = titleUtils.GetTitleByPath(
-            this.props.router.location.pathname
         );
     }
 
@@ -325,8 +309,8 @@ RootIntl = connect(
 
 class Root extends React.Component {
     static childContextTypes = {
-        router: PropTypes.object,
-        location: PropTypes.object
+        router: React.PropTypes.object,
+        location: React.PropTypes.object
     };
 
     componentDidMount() {
@@ -355,5 +339,4 @@ class Root extends React.Component {
     }
 }
 
-Root = supplyFluxContext(alt)(Root);
-export default hot(module)(Root);
+export default supplyFluxContext(alt)(Root);

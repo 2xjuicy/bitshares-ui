@@ -2,7 +2,7 @@ import alt from "alt-instance";
 import SettingsActions from "actions/SettingsActions";
 import IntlActions from "actions/IntlActions";
 import Immutable, {fromJS} from "immutable";
-import {merge} from "lodash-es";
+import {merge} from "lodash";
 import ls from "common/localStorage";
 import {Apis} from "bitsharesjs-ws";
 import {settingsAPIs} from "api/apiConfig";
@@ -24,8 +24,6 @@ class SettingsStore {
         this.bindListeners({
             onSetExchangeLastExpiration:
                 SettingsActions.setExchangeLastExpiration,
-            onSetExchangeTutorialShown:
-                SettingsActions.setExchangeTutorialShown,
             onChangeSetting: SettingsActions.changeSetting,
             onChangeViewSetting: SettingsActions.changeViewSetting,
             onChangeMarketDirection: SettingsActions.changeMarketDirection,
@@ -239,14 +237,7 @@ class SettingsStore {
                     "RUDEX.GBG",
                     "RUDEX.GOLOS",
                     "RUDEX.MUSE",
-                    "RUDEX.DCT",
-                    "OPEN.DOGE",
-                    "OPEN.KRM",
-                    "OPEN.TUSD",
-                    "OPEN.ZEC",
-                    "OPEN.WAVES",
-                    "OPEN.ZRX",
-                    "OPEN.NEO"
+                    "RUDEX.DCT"
                 ],
                 markets_39f5e2ed: [
                     // TESTNET
@@ -501,10 +492,6 @@ class SettingsStore {
 
     onSetExchangeLastExpiration(value) {
         this.setExchangeSettings("lastExpiration", fromJS(value));
-    }
-
-    onSetExchangeTutorialShown(value) {
-        this.setExchangeSettings("tutorialShown", value);
     }
 
     getExhchangeLastExpiration() {

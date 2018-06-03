@@ -1,10 +1,10 @@
 import React from "react";
 import HelpContent from "./Utility/HelpContent";
-import {toPairs} from "lodash-es";
+import {pairs} from "lodash";
 
 class Help extends React.Component {
     render() {
-        let path = toPairs(this.props.params)
+        let path = pairs(this.props.params)
             .map(p => p[1])
             .join("/");
         return (

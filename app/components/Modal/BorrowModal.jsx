@@ -1,6 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {isFinite} from "lodash-es";
+import React, {PropTypes} from "react";
+import {isFinite} from "lodash";
 import ZfApi from "react-foundation-apps/src/utils/foundation-api";
 import BaseModal from "./BaseModal";
 import Trigger from "react-foundation-apps/src/trigger";
@@ -183,26 +182,15 @@ class BorrowModalContent extends React.Component {
 
     _onRatioChange(e) {
         let feed_price = this._getFeedPrice();
-        let target = e.target;
 
-        // Ensure input is valid
-        const regexp_numeral = new RegExp(/[[:digit:]]/);
-        if (!regexp_numeral.test(target.value)) {
-            target.value = target.value.replace(/[^0-9.]/g, "");
-        }
-
-        // Catch initial decimal input
-        if (target.value.charAt(0) == ".") {
-            target.value = "0.";
-        }
-
-        let ratio = target.value;
+        let ratio = e.target.value;
 
         let newState = {
             short_amount: this.state.short_amount,
-            collateral: (this.state.short_amount / feed_price * ratio).toFixed(
-                this.props.backing_asset.get("precision")
-            ),
+            collateral: (
+                (this.state.short_amount / feed_price) *
+                ratio
+            ).toFixed(this.props.backing_asset.get("precision")),
             collateral_ratio: ratio
         };
 
@@ -231,7 +219,7 @@ class BorrowModalContent extends React.Component {
                     utils.get_asset_precision(this.props.backing_asset) +
                     initialCollateral -
                     10,
-                this.state.short_amount / this._getFeedPrice() * 1000.0
+                (this.state.short_amount / this._getFeedPrice()) * 1000.0
             )
         );
 
@@ -259,8 +247,7 @@ class BorrowModalContent extends React.Component {
             initialCollateral -
             10;
         const short_amount =
-            maximumCollateral /
-            this.state.collateral_ratio *
+            (maximumCollateral / this.state.collateral_ratio) *
             this._getFeedPrice();
 
         const newState = {
@@ -543,12 +530,12 @@ class BorrowModalContent extends React.Component {
                         />
                     )}
                 </span>
-                <a onClick={this._payDebt.bind(this)}>
+                <a href onClick={this._payDebt.bind(this)}>
                     <Translate content="borrow.pay_max_debt" />
                 </a>
                 |
                 {collateral_ratio != 0 ? (
-                    <a onClick={this._maximizeDebt.bind(this)}>
+                    <a href onClick={this._maximizeDebt.bind(this)}>
                         <Translate content="borrow.use_max" />
                     </a>
                 ) : (
@@ -580,7 +567,7 @@ class BorrowModalContent extends React.Component {
                         />
                     )}
                 </span>
-                <a onClick={this._maximizeCollateral.bind(this)}>
+                <a href onClick={this._maximizeCollateral.bind(this)}>
                     <Translate content="borrow.use_max" />
                 </a>
             </span>
@@ -766,63 +753,41 @@ class BorrowModalContent extends React.Component {
                                 tabIndex={1}
                             />
                             {errors.collateral_balance ? (
-                                <div
-                                    className="float-left"
-                                    style={{
-                                        paddingTop: 5
-                                    }}
-                                >
+                                <div style={{paddingTop: "0.5rem"}}>
                                     {errors.collateral_balance}
                                 </div>
                             ) : null}
                         </div>
                         {!isPredictionMarket ? (
                             <div>
-                                <div
-                                    className={collateralRatioClass}
-                                    style={{marginBottom: "3.5rem"}}
-                                >
+                                <div className={collateralRatioClass}>
                                     <Translate
                                         component="label"
                                         content="borrow.coll_ratio"
                                     />
-                                    <span>
-                                        <input
-                                            value={
-                                                collateral_ratio == 0
-                                                    ? null
-                                                    : collateral_ratio
-                                            }
-                                            onChange={this._onRatioChange.bind(
-                                                this
-                                            )}
-                                            type="text"
-                                            style={{
-                                                width: "12%",
-                                                float: "right",
-                                                marginTop: -10
-                                            }}
-                                        />
-                                        <input
-                                            style={{width: "85%"}}
-                                            min="0"
-                                            max="6"
-                                            step="0.01"
-                                            onChange={this._onRatioChange.bind(
-                                                this
-                                            )}
-                                            value={collateral_ratio}
-                                            type="range"
-                                        />
-                                    </span>
+                                    <input
+                                        min="0"
+                                        max="6"
+                                        step="0.01"
+                                        onChange={this._onRatioChange.bind(
+                                            this
+                                        )}
+                                        value={collateral_ratio}
+                                        type="range"
+                                    />
+                                    <div className="inline-block">
+                                        {utils.format_number(
+                                            collateral_ratio,
+                                            2
+                                        )}
+                                    </div>
                                     {errors.below_maintenance ||
                                     errors.close_maintenance ? (
                                         <div
                                             style={{
-                                                height: "1em",
-                                                maxWidth: "85%"
+                                                maxWidth: "calc(100% - 50px)"
                                             }}
-                                            className="float-left"
+                                            className="float-right"
                                         >
                                             {errors.below_maintenance}
                                             {errors.close_maintenance}
@@ -834,6 +799,7 @@ class BorrowModalContent extends React.Component {
                         <div className="no-padding grid-content button-group no-overflow">
                             <div
                                 onClick={this._onSubmit.bind(this)}
+                                href
                                 className={buttonClass}
                             >
                                 <Translate content="borrow.adjust" />
@@ -845,6 +811,7 @@ class BorrowModalContent extends React.Component {
                                         this._initialState(this.props)
                                     );
                                 }}
+                                href
                                 className="button hollow primary"
                             >
                                 <Translate content="wallet.reset" />
@@ -859,7 +826,9 @@ class BorrowModalContent extends React.Component {
         );
     }
 }
-BorrowModalContent = BindToChainState(BorrowModalContent);
+BorrowModalContent = BindToChainState(BorrowModalContent, {
+    keep_updating: true
+});
 
 /* This wrapper class appears to be necessary because the decorator eats the show method from refs */
 export default class ModalWrapper extends React.Component {

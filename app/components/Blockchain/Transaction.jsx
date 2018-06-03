@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
+import {PropTypes} from "react";
 import FormattedAsset from "../Utility/FormattedAsset";
 import {Link as RealLink} from "react-router/es";
 import Translate from "react-translate-component";
@@ -19,7 +19,6 @@ import ProposedOperation from "./ProposedOperation";
 import {ChainTypes} from "bitsharesjs/es";
 let {operations} = ChainTypes;
 import ReactTooltip from "react-tooltip";
-import moment from "moment";
 
 require("./operations.scss");
 require("./json-inspector.scss");
@@ -155,11 +154,8 @@ class Transaction extends React.Component {
                         ) : !text && isMine ? (
                             <td>
                                 <Translate content="transfer.memo_unlock" />&nbsp;
-                                <a onClick={this._toggleLock.bind(this)}>
-                                    <Icon
-                                        name="locked"
-                                        title="icons.locked.action"
-                                    />
+                                <a href onClick={this._toggleLock.bind(this)}>
+                                    <Icon name="locked" />
                                 </a>
                             </td>
                         ) : null;
@@ -309,7 +305,7 @@ class Transaction extends React.Component {
                             </td>
                             <td>
                                 <FormattedDate
-                                    value={moment.utc(op[1].expiration)}
+                                    value={op[1].expiration}
                                     format="full"
                                     timeZoneName="short"
                                 />
@@ -971,11 +967,8 @@ class Transaction extends React.Component {
                         ) : !text && isMine ? (
                             <td>
                                 <Translate content="transfer.memo_unlock" />&nbsp;
-                                <a onClick={this._toggleLock.bind(this)}>
-                                    <Icon
-                                        name="locked"
-                                        title="icons.locked.action"
-                                    />
+                                <a href onClick={this._toggleLock.bind(this)}>
+                                    <Icon name="locked" />
                                 </a>
                             </td>
                         ) : null;

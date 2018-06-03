@@ -19,11 +19,10 @@ import SettingsActions from "actions/SettingsActions";
 import WalletUnlockActions from "actions/WalletUnlockActions";
 import Icon from "../Icon/Icon";
 import CopyButton from "../Utility/CopyButton";
-import PropTypes from "prop-types";
 
 class CreateAccountPassword extends React.Component {
     static contextTypes = {
-        router: PropTypes.object.isRequired
+        router: React.PropTypes.object.isRequired
     };
 
     constructor() {
@@ -254,10 +253,7 @@ class CreateAccountPassword extends React.Component {
                                     "tooltip.generate"
                                 )}
                             >
-                                <Icon
-                                    name="question-circle"
-                                    title="icons.question_circle"
-                                />
+                                <Icon name="question-circle" />
                             </span>
                         </label>
                         <div style={{paddingBottom: "0.5rem"}}>
@@ -532,7 +528,7 @@ class CreateAccountPassword extends React.Component {
                 <div
                     style={{width: "100%"}}
                     onClick={() => {
-                        this.context.router.push("/");
+                        this.context.router.push("/dashboard");
                     }}
                     className="button"
                 >
@@ -552,7 +548,7 @@ class CreateAccountPassword extends React.Component {
                                 <Translate content="wallet.tips_dashboard" />:
                             </td>
                             <td>
-                                <Link to="/">
+                                <Link to="/dashboard">
                                     <Translate content="header.dashboard" />
                                 </Link>
                             </td>

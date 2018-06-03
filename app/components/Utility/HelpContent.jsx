@@ -1,9 +1,8 @@
 import React from "react";
-import {zipObject} from "lodash-es";
+import {zipObject} from "lodash";
 import counterpart from "counterpart";
 import utils from "common/utils";
 import {withRouter} from "react-router";
-import PropTypes from "prop-types";
 
 let req = require.context("../../help", true, /\.md/);
 let HelpData = {};
@@ -47,8 +46,8 @@ function adjust_links(str) {
 
 class HelpContent extends React.Component {
     static propTypes = {
-        path: PropTypes.string.isRequired,
-        section: PropTypes.string
+        path: React.PropTypes.string.isRequired,
+        section: React.PropTypes.string
     };
 
     constructor(props) {
@@ -90,7 +89,7 @@ class HelpContent extends React.Component {
 
     setVars(str, hideIssuer) {
         if (hideIssuer == "true") {
-            str = str.replace(/<p>[^<]*{issuer}[^<]*<\/p>/gm, "");
+            var str = str.replace(/^.*{issuer}.*$/gm, "");
         }
 
         return str.replace(/(\{.+?\})/gi, (match, text) => {
@@ -105,6 +104,7 @@ class HelpContent extends React.Component {
                 );
             if (value.date) value = utils.format_date(value.date);
             if (value.time) value = utils.format_time(value.time);
+            // console.log("-- var -->", key, value);
             return value;
         });
     }
@@ -159,9 +159,7 @@ class HelpContent extends React.Component {
             return !null;
         }
 
-        if (this.props.section) {
-            value = value[this.props.section];
-        }
+        if (this.props.section) value = value[this.props.section];
 
         if (!value) {
             console.error(

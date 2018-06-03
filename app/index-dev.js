@@ -1,5 +1,6 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import {render as reactRender} from "react-dom";
+import {AppContainer} from "react-hot-loader";
 // import utils from "./dl_cli_index";
 // if (window) {
 //     window.$utils = utils;
@@ -11,20 +12,27 @@ import ReactDOM from "react-dom";
 */
 import Routes from "./Routes-dev";
 
-// require("./components/Utility/Prototypes"); // Adds a .equals method to Array for use in shouldComponentUpdate
+require("./components/Utility/Prototypes"); // Adds a .equals method to Array for use in shouldComponentUpdate
 
 const rootEl = document.getElementById("content");
 const render = () => {
-    ReactDOM.render(<Routes />, rootEl);
+    reactRender(
+        <AppContainer>
+            <Routes />
+        </AppContainer>,
+        rootEl
+    );
 };
 render();
 
-// if (module.hot) {
-//     module.hot.accept("./Routes-dev.jsx", () => {
-//         const NextApp = require("./Routes-dev").default;
-//         ReactDOM.render(
-//                 <NextApp />,
-//             document.getElementById("content")
-//         );
-//     });
-// }
+if (module.hot) {
+    module.hot.accept("./Routes-dev.jsx", () => {
+        const NextApp = require("./Routes-dev").default;
+        reactRender(
+            <AppContainer>
+                <NextApp />
+            </AppContainer>,
+            document.getElementById("content")
+        );
+    });
+}

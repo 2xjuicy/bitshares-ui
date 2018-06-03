@@ -18,7 +18,7 @@ class MobileMenu extends React.Component {
     }
 
     static contextTypes = {
-        router: PropTypes.object
+        router: React.PropTypes.object
     };
 
     onClick() {
@@ -62,7 +62,7 @@ class MobileMenu extends React.Component {
         let linkToAccountOrDashboard;
         if (myActiveAccounts.size > 0)
             linkToAccountOrDashboard = (
-                <a onClick={this._onNavigate.bind(this, "/")}>
+                <a onClick={this._onNavigate.bind(this, "/dashboard")}>
                     <Translate content="header.dashboard" />
                 </a>
             );

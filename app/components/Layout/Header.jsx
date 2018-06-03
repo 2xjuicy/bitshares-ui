@@ -27,9 +27,6 @@ import AccountImage from "../Account/AccountImage";
 import {ChainStore} from "bitsharesjs/es";
 import WithdrawModal from "../Modal/WithdrawModalNew";
 import {List} from "immutable";
-import PropTypes from "prop-types";
-
-var logo = require("assets/logo-ico-blue.png");
 
 // const FlagImage = ({flag, width = 20, height = 20}) => {
 //     return <img height={height} width={width} src={`${__BASE_URL__}language-dropdown/${flag.toUpperCase()}.png`} />;
@@ -41,8 +38,8 @@ const SUBMENUS = {
 
 class Header extends React.Component {
     static contextTypes = {
-        location: PropTypes.object.isRequired,
-        router: PropTypes.object.isRequired
+        location: React.PropTypes.object.isRequired,
+        router: React.PropTypes.object.isRequired
     };
 
     constructor(props, context) {
@@ -320,8 +317,6 @@ class Header extends React.Component {
               (passwordLogin && currentAccount === passwordAccount);
         const isContact = this.props.contacts.has(currentAccount);
         const enableDepositWithdraw =
-            Apis.instance() &&
-            Apis.instance().chain_id &&
             Apis.instance().chain_id.substr(0, 8) === "4018d784";
 
         if (starredAccounts.size) {
@@ -357,15 +352,19 @@ class Header extends React.Component {
 
         let dashboard = (
             <a
+                style={{padding: "18px"}}
                 className={cnames("logo", {
                     active:
                         active === "/" ||
                         (active.indexOf("dashboard") !== -1 &&
                             active.indexOf("account") === -1)
                 })}
-                onClick={this._onNavigate.bind(this, "/")}
+                onClick={this._onNavigate.bind(this, "/dashboard")}
             >
-                <img style={{margin: 0, height: 40}} src={logo} />
+                <img
+                    style={{margin: 0, height: 30}}
+                    src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9Ii0yODEgNDA0LjkgMzIgMzIiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgLTI4MSA0MDQuOSAzMiAzMjsiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCgkuc3Qwe2ZpbGw6I0ZGRkZGRjt9DQo8L3N0eWxlPg0KPGc+DQoJPGc+DQoJCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0tMjU0LDQzNC40aC0yMi42bDguOS0yNi44aDQuN0wtMjU0LDQzNC40eiBNLTI3NS4yLDQzMy40aDE5LjhsLTguMy0yNC44aC0zLjNMLTI3NS4yLDQzMy40eiIvPg0KCTwvZz4NCjwvZz4NCjwvc3ZnPg0K"
+                />
             </a>
         );
 
@@ -375,13 +374,12 @@ class Header extends React.Component {
                     <a
                         className="button create-account"
                         onClick={this._onNavigate.bind(this, "/create-account")}
-                        style={{padding: "1rem", border: "none"}}
+                        style={{
+                            padding: "25px 20px",
+                            border: 0,
+                            borderLeft: "1px solid #545456"
+                        }}
                     >
-                        <Icon
-                            className="icon-14px"
-                            name="user"
-                            title="icons.user.create_account"
-                        />{" "}
                         <Translate content="header.create_account" />
                     </a>
                 </ActionSheet.Button>
@@ -390,8 +388,8 @@ class Header extends React.Component {
         // let lock_unlock = ((!!this.props.current_wallet) || passwordLogin) ? (
         //     <div className="grp-menu-item" >
         //     { this.props.locked ?
-        //         <a style={{padding: "1rem"}} href onClick={this._toggleLock.bind(this)} data-class="unlock-tooltip" data-offset="{'left': 50}" data-tip={locked_tip} data-place="bottom" data-html><Icon className="icon-14px" name="locked" title="icons.locked.common" /></a>
-        //         : <a style={{padding: "1rem"}} href onClick={this._toggleLock.bind(this)} data-class="unlock-tooltip" data-offset="{'left': 50}" data-tip={unlocked_tip} data-place="bottom" data-html><Icon className="icon-14px" name="unlocked" title="icons.unlocked.common" /></a> }
+        //         <a style={{padding: "1rem"}} href onClick={this._toggleLock.bind(this)} data-class="unlock-tooltip" data-offset="{'left': 50}" data-tip={locked_tip} data-place="bottom" data-html><Icon className="icon-14px" name="locked"/></a>
+        //         : <a style={{padding: "1rem"}} href onClick={this._toggleLock.bind(this)} data-class="unlock-tooltip" data-offset="{'left': 50}" data-tip={unlocked_tip} data-place="bottom" data-html><Icon className="icon-14px" name="unlocked"/></a> }
         //     </div>
         // ) : null;
 
@@ -460,17 +458,9 @@ class Header extends React.Component {
         }
 
         let hamburger = this.state.dropdownActive ? (
-            <Icon
-                className="icon-14px"
-                name="hamburger-x"
-                title="icons.hamburger_x"
-            />
+            <Icon className="icon-2x" name="hamburger-x" />
         ) : (
-            <Icon
-                className="icon-14px"
-                name="hamburger"
-                title="icons.hamburger"
-            />
+            <Icon className="icon-2x" name="hamburger" />
         );
         const hasLocalWallet = !!WalletDb.getWallet();
 
@@ -483,7 +473,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="transfer"
-                        title="icons.transfer"
                     />
                     <Translate
                         className="column-hide-small"
@@ -501,12 +490,6 @@ class Header extends React.Component {
                         active: active.indexOf("settings") !== -1
                     })}
                 >
-                    <Icon
-                        size="1_5x"
-                        style={{position: "relative", top: 0, left: -8}}
-                        name="cogs"
-                        title="icons.cogs"
-                    />
                     <Translate
                         className="column-hide-small"
                         component="span"
@@ -527,7 +510,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="deposit"
-                        title="icons.deposit.deposit_withdraw"
                     />
                     <Translate
                         className="column-hide-small"
@@ -547,7 +529,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="news"
-                        title="icons.news"
                     />
                     <Translate
                         className="column-hide-small"
@@ -567,7 +548,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="question-circle"
-                        title="icons.question_circle"
                     />
                     <Translate
                         className="column-hide-small"
@@ -589,7 +569,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="thumbs-up"
-                        title="icons.thumbs_up"
                     />
                     <Translate
                         className="column-hide-small"
@@ -614,7 +593,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="assets"
-                        title="icons.assets"
                     />
                     <Translate
                         className="column-hide-small"
@@ -636,7 +614,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="text"
-                        title="icons.text.signed_messages"
                     />
                     <Translate
                         className="column-hide-small"
@@ -658,7 +635,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="text"
-                        title="icons.text.membership_stats"
                     />
                     <Translate
                         className="column-hide-small"
@@ -680,7 +656,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="hourglass"
-                        title="icons.hourglass"
                     />
                     <Translate
                         className="column-hide-small"
@@ -702,7 +677,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="list"
-                        title="icons.list"
                     />
                     <Translate
                         className="column-hide-small"
@@ -724,7 +698,6 @@ class Header extends React.Component {
                         size="1_5x"
                         style={{position: "relative", top: 0, left: -8}}
                         name="warning"
-                        title="icons.warning"
                     />
                     <Translate
                         className="column-hide-small"
@@ -741,7 +714,7 @@ class Header extends React.Component {
                     className="dropdown header-menu header-submenu"
                     style={{
                         left: -200,
-                        top: 64,
+                        top: 65,
                         maxHeight: !this.state.dropdownActive ? 0 : maxHeight,
                         overflowY: "auto"
                     }}
@@ -879,12 +852,9 @@ class Header extends React.Component {
         };
 
         return (
-            <div className="header-container" style={{minHeight: "64px"}}>
+            <div className="header-container" style={{minHeight: "65px"}}>
                 <div>
-                    <div
-                        className="header menu-group primary"
-                        style={{flexWrap: "nowrap", justifyContent: "none"}}
-                    >
+                    <div className="header menu-group primary">
                         {__ELECTRON__ ? (
                             <div className="grid-block show-for-medium shrink electron-navigation">
                                 <ul className="menu-bar">
@@ -961,16 +931,6 @@ class Header extends React.Component {
                                                 ) === -1
                                         })}
                                     >
-                                        <Icon
-                                            size="1_5x"
-                                            style={{
-                                                position: "relative",
-                                                top: -2,
-                                                left: -8
-                                            }}
-                                            name="dashboard"
-                                            title="icons.dashboard"
-                                        />
                                         <Translate
                                             className="column-hide-small"
                                             content="header.dashboard"
@@ -995,16 +955,6 @@ class Header extends React.Component {
                                         tradeUrl
                                     )}
                                 >
-                                    <Icon
-                                        size="1_5x"
-                                        style={{
-                                            position: "relative",
-                                            top: -2,
-                                            left: -8
-                                        }}
-                                        name="trade"
-                                        title="icons.trade.exchange"
-                                    />
                                     <Translate
                                         className="column-hide-small"
                                         component="span"
@@ -1030,16 +980,6 @@ class Header extends React.Component {
                                         "/explorer/blocks"
                                     )}
                                 >
-                                    <Icon
-                                        size="2x"
-                                        style={{
-                                            position: "relative",
-                                            top: 0,
-                                            left: -8
-                                        }}
-                                        name="server"
-                                        title="icons.server"
-                                    />
                                     <Translate
                                         className="column-hide-small"
                                         component="span"
@@ -1053,16 +993,6 @@ class Header extends React.Component {
                                         style={{flexFlow: "row"}}
                                         onClick={this._showSend.bind(this)}
                                     >
-                                        <Icon
-                                            size="1_5x"
-                                            style={{
-                                                position: "relative",
-                                                top: 0,
-                                                left: -8
-                                            }}
-                                            name="transfer"
-                                            title="icons.transfer"
-                                        />
                                         <span>
                                             <Translate content="header.payments" />
                                         </span>
@@ -1115,11 +1045,7 @@ class Header extends React.Component {
                                 )}
                             >
                                 <div className="table-cell">
-                                    <Icon
-                                        size="2x"
-                                        name="folder"
-                                        title="icons.folder"
-                                    />
+                                    <Icon size="2x" name="folder" />
                                 </div>
                                 <div className="table-cell">
                                     <Translate content="explorer.accounts.title" />
@@ -1139,11 +1065,6 @@ class Header extends React.Component {
                                 className="lock-unlock"
                                 size="2x"
                                 name={this.props.locked ? "locked" : "unlocked"}
-                                title={
-                                    this.props.locked
-                                        ? "icons.locked.common"
-                                        : "icons.unlocked.common"
-                                }
                             />
                         </span>
                     )}
@@ -1177,13 +1098,6 @@ class Header extends React.Component {
                                     onClick={this._toggleLock.bind(this)}
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="power"
-                                            title="icons.power"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate
                                             content={`header.${
                                                 this.props.locked
@@ -1216,13 +1130,6 @@ class Header extends React.Component {
                                         )}
                                     >
                                         <div className="table-cell">
-                                            <Icon
-                                                size="2x"
-                                                name="user"
-                                                title="icons.user.create_account"
-                                            />
-                                        </div>
-                                        <div className="table-cell">
                                             <Translate content="header.create_account" />
                                         </div>
                                     </li>
@@ -1241,11 +1148,7 @@ class Header extends React.Component {
                                         )}
                                     >
                                         <div className="table-cell">
-                                            <Icon
-                                                size="2x"
-                                                name="dashboard"
-                                                title="icons.dasboard"
-                                            />
+                                            <Icon size="2x" name="dashboard" />
                                         </div>
                                         <div className="table-cell">
                                             <Translate content="header.dashboard" />
@@ -1262,19 +1165,6 @@ class Header extends React.Component {
                                                 : "_onAddContact"
                                         ].bind(this)}
                                     >
-                                        <div className="table-cell">
-                                            <Icon
-                                                size="2x"
-                                                name={`${
-                                                    isContact ? "minus" : "plus"
-                                                }-circle`}
-                                                title={
-                                                    isContact
-                                                        ? "icons.minus_circle.remove_contact"
-                                                        : "icons.plus_circle.add_contact"
-                                                }
-                                            />
-                                        </div>
                                         <div className="table-cell">
                                             <Translate
                                                 content={`account.${
@@ -1302,13 +1192,6 @@ class Header extends React.Component {
                                     )}
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="trade"
-                                            title="icons.trade.exchange"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate content="header.exchange" />
                                     </div>
                                 </li>
@@ -1328,13 +1211,6 @@ class Header extends React.Component {
                                     )}
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="server"
-                                            title="icons.server"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate content="header.explorer" />
                                     </div>
                                 </li>
@@ -1349,13 +1225,6 @@ class Header extends React.Component {
                                         "/transfer"
                                     )}
                                 >
-                                    <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="transfer"
-                                            title="icons.transfer"
-                                        />
-                                    </div>
                                     <div className="table-cell">
                                         <Translate content="header.payments_legacy" />
                                     </div>
@@ -1381,13 +1250,6 @@ class Header extends React.Component {
                                     }
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="deposit"
-                                            title="icons.deposit.deposit"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate content="gateway.deposit" />
                                     </div>
                                 </li>
@@ -1408,13 +1270,6 @@ class Header extends React.Component {
                                             : this._showDeposit.bind(this)
                                     }
                                 >
-                                    <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="deposit"
-                                            title="icons.deposit.deposit"
-                                        />
-                                    </div>
                                     <div className="table-cell">
                                         <Translate content="modal.deposit.submit_beta" />
                                     </div>
@@ -1440,13 +1295,6 @@ class Header extends React.Component {
                                     }
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="withdraw"
-                                            title="icons.withdraw"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate content="modal.withdraw.submit" />
                                     </div>
                                 </li>
@@ -1469,13 +1317,6 @@ class Header extends React.Component {
                                     }
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="withdraw"
-                                            title="icons.withdraw"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate content="modal.withdraw.submit_beta" />
                                     </div>
                                 </li>
@@ -1495,13 +1336,6 @@ class Header extends React.Component {
                                         "/settings"
                                     )}
                                 >
-                                    <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="cogs"
-                                            title="icons.cogs"
-                                        />
-                                    </div>
                                     <div className="table-cell">
                                         <Translate content="header.settings" />
                                     </div>
@@ -1524,13 +1358,6 @@ class Header extends React.Component {
                                     )}
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="cogs"
-                                            title="icons.cogs"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate content="header.settings" />{" "}
                                     </div>
                                 </li>
@@ -1544,13 +1371,6 @@ class Header extends React.Component {
                                         "/news"
                                     )}
                                 >
-                                    <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="news"
-                                            title="icons.news"
-                                        />
-                                    </div>
                                     <div className="table-cell">
                                         <Translate content="news.news" />
                                     </div>
@@ -1572,13 +1392,6 @@ class Header extends React.Component {
                                     )}
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="question-circle"
-                                            title="icons.question_circle"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate content="header.help" />
                                     </div>
                                 </li>
@@ -1592,13 +1405,6 @@ class Header extends React.Component {
                                         `/account/${currentAccount}/voting`
                                     )}
                                 >
-                                    <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="thumbs-up"
-                                            title="icons.thumbs_up"
-                                        />
-                                    </div>
                                     <div className="table-cell">
                                         <Translate content="account.voting" />
                                     </div>
@@ -1616,13 +1422,6 @@ class Header extends React.Component {
                                     )}
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="assets"
-                                            title="icons.assets"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate content="explorer.assets.title" />
                                     </div>
                                 </li>
@@ -1639,13 +1438,6 @@ class Header extends React.Component {
                                     )}
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="text"
-                                            title="icons.text.signed_messages"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate content="account.signedmessages.menuitem" />
                                     </div>
                                 </li>
@@ -1661,13 +1453,6 @@ class Header extends React.Component {
                                         `/account/${currentAccount}/member-stats`
                                     )}
                                 >
-                                    <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="text"
-                                            title="icons.text.membership_stats"
-                                        />
-                                    </div>
                                     <div className="table-cell">
                                         <Translate content="account.member.stats" />
                                     </div>
@@ -1686,13 +1471,6 @@ class Header extends React.Component {
                                         )}
                                     >
                                         <div className="table-cell">
-                                            <Icon
-                                                size="2x"
-                                                name="hourglass"
-                                                title="icons.hourglass"
-                                            />
-                                        </div>
-                                        <div className="table-cell">
                                             <Translate content="account.vesting.title" />
                                         </div>
                                     </li>
@@ -1709,13 +1487,6 @@ class Header extends React.Component {
                                     )}
                                 >
                                     <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="list"
-                                            title="icons.list"
-                                        />
-                                    </div>
-                                    <div className="table-cell">
                                         <Translate content="account.whitelist.title" />
                                     </div>
                                 </li>
@@ -1731,13 +1502,6 @@ class Header extends React.Component {
                                         `/account/${currentAccount}/permissions`
                                     )}
                                 >
-                                    <div className="table-cell">
-                                        <Icon
-                                            size="2x"
-                                            name="warning"
-                                            title="icons.warning"
-                                        />
-                                    </div>
                                     <div className="table-cell">
                                         <Translate content="account.permissions" />
                                     </div>
@@ -1759,13 +1523,6 @@ class Header extends React.Component {
                                             "/accounts"
                                         )}
                                     >
-                                        <div className="table-cell">
-                                            <Icon
-                                                size="2x"
-                                                name="folder"
-                                                title="icons.folder"
-                                            />
-                                        </div>
                                         <div className="table-cell">
                                             <Translate content="explorer.accounts.title" />
                                         </div>

@@ -42,7 +42,6 @@ class LoginSelector extends React.Component {
 
         // do redirect to portfolio if user already logged in
         if (
-            this.props.router &&
             Array.isArray(myAccounts) &&
             myAccounts.length !== 0 &&
             childCount === 0
@@ -81,6 +80,7 @@ class LoginSelector extends React.Component {
                             return (
                                 <li key={locale}>
                                     <a
+                                        href
                                         onClick={e => {
                                             e.preventDefault();
                                             IntlActions.switchLocale(locale);
@@ -117,9 +117,6 @@ class LoginSelector extends React.Component {
             <div className="grid-block align-center">
                 <div className="grid-block shrink vertical">
                     <div className="grid-content shrink text-center account-creation">
-                        <div>
-                            <img src={logo} />
-                        </div>
                         {childCount == 0 ? null : (
                             <div>
                                 <Translate
@@ -160,7 +157,6 @@ class LoginSelector extends React.Component {
                         {!!childCount ? null : (
                             <div className="grid-block account-login-options">
                                 <Link
-                                    id="account_login_button"
                                     to="/create-account/password"
                                     className="button primary"
                                     data-intro={translator.translate(

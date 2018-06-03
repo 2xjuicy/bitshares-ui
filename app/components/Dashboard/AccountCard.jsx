@@ -5,7 +5,6 @@ import ChainTypes from "../Utility/ChainTypes";
 import BindToChainState from "../Utility/BindToChainState";
 import AccountStore from "stores/AccountStore";
 import {ChainStore} from "bitsharesjs/es";
-import PropTypes from "prop-types";
 
 /**
  *  @brief displays the summary of a given account in a condenced view (for the dashboard)
@@ -17,7 +16,7 @@ import PropTypes from "prop-types";
 
 class AccountCard extends React.Component {
     static contextTypes = {
-        router: PropTypes.object.isRequired
+        router: React.PropTypes.object.isRequired
     };
 
     static propTypes = {

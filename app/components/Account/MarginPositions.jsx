@@ -18,7 +18,6 @@ import {List} from "immutable";
 import {Link} from "react-router/es";
 import TranslateWithLinks from "../Utility/TranslateWithLinks";
 import Immutable from "immutable";
-import PropTypes from "prop-types";
 
 const alignRight = {textAlign: "right"};
 const alignLeft = {textAlign: "left"};
@@ -42,7 +41,7 @@ class MarginPosition extends React.Component {
     };
 
     static contextTypes = {
-        router: PropTypes.object
+        router: React.PropTypes.object
     };
 
     _onUpdatePosition(e) {
@@ -343,7 +342,6 @@ class MarginPosition extends React.Component {
                         <a onClick={this._onUpdatePosition.bind(this)}>
                             <Icon
                                 name="adjust"
-                                title="icons.adjust"
                                 className="icon-14px rotate90"
                             />
                         </a>
@@ -359,11 +357,7 @@ class MarginPosition extends React.Component {
                         style={{paddingBottom: 5}}
                     >
                         <a onClick={this._onClosePosition.bind(this)}>
-                            <Icon
-                                name="cross-circle"
-                                title="icons.cross_circle.close_position"
-                                className="icon-14px"
-                            />
+                            <Icon name="cross-circle" className="icon-14px" />
                         </a>
                     </div>
                     {debtAsset ? (
@@ -384,7 +378,7 @@ class MarginPosition extends React.Component {
         );
     }
 }
-MarginPosition = BindToChainState(MarginPosition);
+MarginPosition = BindToChainState(MarginPosition, {keep_updating: true});
 
 class MarginPositionWrapper extends React.Component {
     static propTypes = {
@@ -407,7 +401,9 @@ class MarginPositionWrapper extends React.Component {
     }
 }
 
-MarginPositionWrapper = BindToChainState(MarginPositionWrapper);
+MarginPositionWrapper = BindToChainState(MarginPositionWrapper, {
+    keep_updating: true
+});
 
 class MarginPositionPlaceHolder extends React.Component {
     static propTypes = {
@@ -420,7 +416,7 @@ class MarginPositionPlaceHolder extends React.Component {
     };
 
     static contextTypes = {
-        router: PropTypes.object
+        router: React.PropTypes.object
     };
 
     _onUpdatePosition(e) {
@@ -567,7 +563,6 @@ class MarginPositionPlaceHolder extends React.Component {
                         <a onClick={this._onUpdatePosition.bind(this)}>
                             <Icon
                                 name="adjust"
-                                title="icons.adjust"
                                 className="icon-14px rotate90"
                             />
                         </a>

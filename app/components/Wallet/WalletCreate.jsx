@@ -9,11 +9,10 @@ import WalletActions from "actions/WalletActions";
 import {connect} from "alt-react";
 import cname from "classnames";
 import SettingsActions from "actions/SettingsActions";
-import PropTypes from "prop-types";
 
 class CreateNewWallet extends Component {
     static propTypes = {
-        hideTitle: PropTypes.bool
+        hideTitle: React.PropTypes.bool
     };
 
     constructor(props) {
@@ -130,7 +129,7 @@ class CreateNewWallet extends Component {
                     <h4>
                         <Translate content="wallet.wallet_created" />
                     </h4>
-                    <Link to="/">
+                    <Link to="/dashboard">
                         <div className="button success">
                             <Translate content="wallet.done" />
                         </div>

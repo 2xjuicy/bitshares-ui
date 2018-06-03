@@ -17,7 +17,6 @@ import {Tabs, Tab} from "../Utility/Tabs";
 import AmountSelector from "../Utility/AmountSelector";
 import assetConstants from "chain/asset_constants";
 import {estimateFee} from "common/trxHelper";
-import PropTypes from "prop-types";
 
 let GRAPHENE_MAX_SHARE_SUPPLY = new big(
     assetConstants.GRAPHENE_MAX_SHARE_SUPPLY
@@ -26,7 +25,7 @@ let GRAPHENE_MAX_SHARE_SUPPLY = new big(
 class BitAssetOptions extends React.Component {
     static propTypes = {
         backingAsset: ChainTypes.ChainAsset.isRequired,
-        isUpdate: PropTypes.bool
+        isUpdate: React.PropTypes.bool
     };
 
     static defaultProps = {

@@ -435,7 +435,7 @@ class CreateAccount extends React.Component {
                                 <Translate content="wallet.tips_dashboard" />:
                             </td>
                             <td>
-                                <Link to="/">
+                                <Link to="/dashboard">
                                     <Translate content="header.dashboard" />
                                 </Link>
                             </td>

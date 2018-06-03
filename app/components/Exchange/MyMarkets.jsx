@@ -16,12 +16,11 @@ import SettingsActions from "actions/SettingsActions";
 import AssetActions from "actions/AssetActions";
 import MarketsActions from "actions/MarketsActions";
 import cnames from "classnames";
-import {debounce} from "lodash-es";
+import {debounce} from "lodash";
 import AssetSelector from "../Utility/AssetSelector";
 import counterpart from "counterpart";
 import LoadingIndicator from "../LoadingIndicator";
 import {ChainValidation} from "bitsharesjs/es";
-import PropTypes from "prop-types";
 
 let lastLookup = new Date();
 
@@ -149,7 +148,6 @@ class MarketGroup extends React.Component {
                             key={header.name}
                             className="clickable"
                             onClick={this._changeSort.bind(this, "volume")}
-                            style={{textAlign: "right"}}
                         >
                             <Translate content="exchange.vol_short" />
                         </th>
@@ -157,7 +155,7 @@ class MarketGroup extends React.Component {
 
                 case "price":
                     return (
-                        <th key={header.name} style={{textAlign: "right"}}>
+                        <th key={header.name}>
                             <Translate content="exchange.price" />
                         </th>
                     );
@@ -182,7 +180,6 @@ class MarketGroup extends React.Component {
                             key={header.name}
                             className="clickable"
                             onClick={this._changeSort.bind(this, "change")}
-                            style={{textAlign: "right"}}
                         >
                             <Translate content="exchange.change" />
                         </th>
@@ -197,13 +194,18 @@ class MarketGroup extends React.Component {
 
                 case "add":
                     return (
-                        <th key={header.name} style={{textAlign: "right"}}>
+                        <th key={header.name}>
                             <Translate content="account.perm.confirm_add" />
                         </th>
                     );
 
                 default:
-                    return <th key={header.name} />;
+                    return (
+                        <th
+                            key={header.name}
+                            style={{paddingLeft: 3, paddingRight: 0}}
+                        />
+                    );
             }
         });
 
@@ -300,7 +302,7 @@ class MarketGroup extends React.Component {
         return (
             <div style={{paddingRight: 10}}>
                 {open ? (
-                    <table className="table table-hover text-right">
+                    <table className="table table-hover">
                         <thead>
                             <tr>{headers}</tr>
                         </thead>
@@ -326,7 +328,7 @@ class MyMarkets extends React.Component {
     };
 
     static contextTypes = {
-        router: PropTypes.object.isRequired
+        router: React.PropTypes.object.isRequired
     };
 
     constructor(props) {
@@ -780,10 +782,7 @@ class MyMarkets extends React.Component {
 
         return (
             <div className={this.props.className} style={this.props.style}>
-                <div
-                    style={this.props.headerStyle}
-                    className="grid-block shrink left-orderbook-header bottom-header"
-                >
+                <div className="grid-block shrink left-orderbook-header bottom-header">
                     <div
                         ref="myMarkets"
                         className={starClass}
@@ -825,12 +824,18 @@ class MyMarkets extends React.Component {
                         style={{
                             width: "100%",
                             textAlign: "left",
-                            padding: "0.75rem 0.5rem"
+                            padding: "10px 20px",
+                            alignItems: "center",
+                            justifyContent: "space-between"
                         }}
                     >
                         <label style={{margin: "3px 0 0"}}>
                             <input
-                                style={{position: "relative", top: 3}}
+                                style={{
+                                    position: "relative",
+                                    top: 3,
+                                    display: "none"
+                                }}
                                 className="no-margin"
                                 type="checkbox"
                                 checked={this.props.onlyStars}
@@ -838,7 +843,7 @@ class MyMarkets extends React.Component {
                                     MarketsActions.toggleStars();
                                 }}
                             />
-                            <span style={{paddingLeft: "0.4rem"}}>
+                            <span>
                                 <TranslateWithLinks
                                     string="exchange.show_only_star_formatter"
                                     keys={[
@@ -890,7 +895,7 @@ class MyMarkets extends React.Component {
                         style={{
                             width: "100%",
                             textAlign: "left",
-                            padding: "0.75rem 0.5rem"
+                            padding: "0 20px"
                         }}
                     >
                         <table>

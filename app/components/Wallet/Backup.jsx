@@ -1,5 +1,4 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
+import React, {PropTypes, Component} from "react";
 import {Link} from "react-router/es";
 import {FormattedDate} from "react-intl";
 import {connect} from "alt-react";
@@ -15,9 +14,9 @@ import notify from "actions/NotificationActions";
 import {saveAs} from "file-saver";
 import cname from "classnames";
 import Translate from "react-translate-component";
+import {ChainConfig} from "bitsharesjs-ws";
 import {PrivateKey} from "bitsharesjs/es";
 import SettingsActions from "actions/SettingsActions";
-import {backupName} from "common/backupUtils";
 
 const connectObject = {
     listenTo() {
@@ -149,7 +148,7 @@ class Restore extends Component {
                             name={new_wallet.toUpperCase()}
                         />
                     </h5>
-                    <Link to="/">
+                    <Link to="/dashboard">
                         <div className="button outline">
                             <Translate
                                 component="span"
@@ -330,7 +329,21 @@ Download = connect(
 
 class Create extends Component {
     getBackupName() {
-        return backupName(this.props.wallet.current_wallet);
+        let name = this.props.wallet.current_wallet;
+        let address_prefix = ChainConfig.address_prefix.toLowerCase();
+        if (name.indexOf(address_prefix) !== 0)
+            name = address_prefix + "_" + name;
+
+        let date = new Date();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        let stampedName = `${name}_${date.getFullYear()}${
+            month >= 10 ? month : "0" + month
+        }${day >= 10 ? day : "0" + day}`;
+
+        name = stampedName + ".bin";
+
+        return name;
     }
 
     render() {

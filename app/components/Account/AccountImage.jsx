@@ -1,7 +1,6 @@
 import React from "react";
 import Identicon from "./Identicon";
-import {Component} from "react";
-import PropTypes from "prop-types";
+import {PropTypes, Component} from "react";
 
 class AccountImage extends Component {
     render() {

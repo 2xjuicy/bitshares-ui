@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
+import {PropTypes} from "react";
 import {FormattedDate} from "react-intl";
 import Immutable from "immutable";
 import BlockchainActions from "actions/BlockchainActions";
@@ -215,4 +215,4 @@ class Block extends React.Component {
     }
 }
 
-export default BindToChainState(Block);
+export default BindToChainState(Block, {keep_updating: true});

@@ -93,6 +93,7 @@ class AccountPage extends React.Component {
     }
 }
 AccountPage = BindToChainState(AccountPage, {
+    keep_updating: true,
     show_loader: true
 });
 

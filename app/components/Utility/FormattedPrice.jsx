@@ -11,7 +11,6 @@ import AssetName from "./AssetName";
 import Pulsate from "./Pulsate";
 import marketUtils from "common/market_utils";
 import {Asset, Price} from "common/MarketClasses";
-import PropTypes from "prop-types";
 
 /**
  *  Given an amount and an asset, render it with proper precision
@@ -26,13 +25,13 @@ import PropTypes from "prop-types";
 
 class FormattedPrice extends React.Component {
     static propTypes = {
-        base_amount: PropTypes.any,
-        quote_amount: PropTypes.any,
-        decimals: PropTypes.number
+        base_amount: React.PropTypes.any,
+        quote_amount: React.PropTypes.any,
+        decimals: React.PropTypes.number
     };
 
     static contextTypes = {
-        router: PropTypes.object
+        router: React.PropTypes.object
     };
 
     constructor(props) {

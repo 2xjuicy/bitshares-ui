@@ -1,10 +1,9 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 class LoadingIndicator extends React.Component {
     static propTypes = {
-        type: PropTypes.string,
-        loadingText: PropTypes.string
+        type: React.PropTypes.string,
+        loadingText: React.PropTypes.string
     };
 
     static defaultProps = {

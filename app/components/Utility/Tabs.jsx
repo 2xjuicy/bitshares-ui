@@ -1,5 +1,4 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, {PropTypes} from "react";
 import Translate from "react-translate-component";
 import cnames from "classnames";
 import {connect} from "alt-react";
@@ -116,7 +115,7 @@ class Tabs extends React.Component {
     };
 
     static contextTypes = {
-        router: PropTypes.object.isRequired
+        router: React.PropTypes.object.isRequired
     };
 
     constructor(props) {

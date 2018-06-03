@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
+import {PropTypes} from "react";
 import Ps from "perfect-scrollbar";
 import utils from "common/utils";
 import Translate from "react-translate-component";
@@ -10,6 +10,7 @@ import TransitionWrapper from "../Utility/TransitionWrapper";
 import AssetName from "../Utility/AssetName";
 import {StickyTable} from "react-sticky-table";
 import Icon from "../Icon/Icon";
+import "react-sticky-table/dist/react-sticky-table.css";
 
 class OrderBookRowVertical extends React.Component {
     shouldComponentUpdate(np) {
@@ -129,18 +130,14 @@ class OrderBookRowHorizontal extends React.Component {
                 {position === "left" ? (
                     <td>{total}</td>
                 ) : (
-                    <td style={{width: "25%"}} className={integerClass}>
-                        {price}
-                    </td>
+                    <td className={integerClass}>{price}</td>
                 )}
                 <td>{position === "left" ? value : amount}</td>
                 <td>{position === "left" ? amount : value}</td>
                 {position === "right" ? (
                     <td>{total}</td>
                 ) : (
-                    <td style={{width: "25%"}} className={integerClass}>
-                        {price}
-                    </td>
+                    <td className={integerClass}>{price}</td>
                 )}
             </tr>
         );
@@ -389,13 +386,11 @@ class OrderBook extends React.Component {
             });
 
             let tempAsks = combinedAsks;
-            tempAsks.sort((a, b) => {
-                if (horizontal) {
-                    return a.getPrice() - b.getPrice();
-                } else {
+            if (!horizontal) {
+                tempAsks.sort((a, b) => {
                     return b.getPrice() - a.getPrice();
-                }
-            });
+                });
+            }
             askRows = tempAsks.map((order, index) => {
                 return horizontal ? (
                     <OrderBookRowHorizontal
@@ -445,13 +440,7 @@ class OrderBook extends React.Component {
                                 className="header-sub-title"
                                 content="exchange.total"
                             />
-                            <span className="header-sub-title">
-                                {" "}
-                                (<AssetName
-                                    dataPlace="top"
-                                    name={baseSymbol}
-                                />)
-                            </span>
+                            <span className="header-sub-title" />
                         </th>
                         <th>
                             <span className="header-sub-title">
@@ -505,13 +494,7 @@ class OrderBook extends React.Component {
                                 className="header-sub-title"
                                 content="exchange.total"
                             />
-                            <span className="header-sub-title">
-                                {" "}
-                                (<AssetName
-                                    dataPlace="top"
-                                    name={baseSymbol}
-                                />)
-                            </span>
+                            <span className="header-sub-title" />
                         </th>
                     </tr>
                 </thead>
@@ -564,7 +547,6 @@ class OrderBook extends React.Component {
                                         >
                                             <Icon
                                                 name="thumb-tack"
-                                                title="icons.thumb_tack"
                                                 className="icon-14px"
                                             />
                                         </span>
@@ -586,8 +568,8 @@ class OrderBook extends React.Component {
                                     </span>
                                 </div>
                             </div>
-                            <div style={{paddingRight: "0.6rem"}}>
-                                <table className="table order-table table-hover fixed-table text-right">
+                            <div style={{paddingRight: "10px"}}>
+                                <table className="table order-table table-hover fixed-table">
                                     {!this.state.flip
                                         ? rightHeader
                                         : leftHeader}
@@ -597,14 +579,15 @@ class OrderBook extends React.Component {
                                 className="grid-block"
                                 ref="hor_asks"
                                 style={{
-                                    paddingRight: "0.6rem",
+                                    paddingRight: "10px",
                                     overflow: "hidden",
-                                    maxHeight: 210
+                                    maxHeight: 234,
+                                    paddingBottom: 56
                                 }}
                             >
                                 <table
                                     style={{paddingBottom: 5}}
-                                    className="table order-table table-hover fixed-table text-right no-overflow"
+                                    className="table order-table table-hover fixed-table no-overflow"
                                 >
                                     <TransitionWrapper
                                         ref="askTransition"
@@ -678,7 +661,6 @@ class OrderBook extends React.Component {
                                         >
                                             <Icon
                                                 name="thumb-tack"
-                                                title="icons.thumb_tack"
                                                 className="icon-14px"
                                             />
                                         </span>
@@ -701,7 +683,7 @@ class OrderBook extends React.Component {
                                 </div>
                             </div>
                             <div style={{paddingRight: "0.6rem"}}>
-                                <table className="table order-table table-hover fixed-table text-right">
+                                <table className="table order-table table-hover fixed-table">
                                     {this.state.flip ? rightHeader : leftHeader}
                                 </table>
                             </div>
@@ -709,9 +691,10 @@ class OrderBook extends React.Component {
                                 className="grid-block"
                                 ref="hor_bids"
                                 style={{
-                                    paddingRight: "0.6rem",
+                                    paddingRight: "10px",
                                     overflow: "hidden",
-                                    maxHeight: 210
+                                    maxHeight: 234,
+                                    paddingBottom: 56
                                 }}
                             >
                                 <table
@@ -806,7 +789,7 @@ class OrderBook extends React.Component {
                                         colSpan={3}
                                         className="no-orders padtop"
                                     >
-                                        <Translate content="exchange.no_orders" />
+                                        No orders
                                     </td>
                                 ) : (
                                     <td
@@ -823,7 +806,7 @@ class OrderBook extends React.Component {
                                                                 .toggleSpreadValue
                                                         }
                                                     >
-                                                        <Translate content="exchange.spread" />{" "}
+                                                        Spread{" "}
                                                         <span className="spread-value">
                                                             {spread}
                                                         </span>
@@ -839,15 +822,10 @@ class OrderBook extends React.Component {
                                                             ? "locked"
                                                             : "unlocked"
                                                     }
-                                                    title={
-                                                        this.state.autoScroll
-                                                            ? "icons.locked.enable_auto_scroll"
-                                                            : "icons.unlocked.disable_auto_scroll"
-                                                    }
                                                 />
                                                 {!!this.props.latest && (
                                                     <span className="right">
-                                                        <Translate content="exchange.latest" />{" "}
+                                                        Latest{" "}
                                                         <span
                                                             className={
                                                                 this.props
@@ -882,7 +860,7 @@ class OrderBook extends React.Component {
                                                   className="cell no-orders"
                                                   colSpan="3"
                                               >
-                                                  <Translate content="exchange.no_bids" />
+                                                  No bids
                                               </td>
                                           </div>
                                       )}
@@ -893,7 +871,6 @@ class OrderBook extends React.Component {
                         <div onClick={this.props.moveOrderBook}>
                             <Icon
                                 name="thumb-untack"
-                                title="icons.thumb_untack"
                                 className="icon-14px order-book-button-h"
                             />
                         </div>

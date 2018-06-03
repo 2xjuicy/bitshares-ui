@@ -12,12 +12,11 @@ import RestoreSettings from "./RestoreSettings";
 import ResetSettings from "./ResetSettings";
 import BackupSettings from "./BackupSettings";
 import AccessSettings from "./AccessSettings";
-import {set} from "lodash-es";
-import PropTypes from "prop-types";
+import {set} from "lodash";
 
 class Settings extends React.Component {
     static contextTypes = {
-        router: PropTypes.object.isRequired
+        router: React.PropTypes.object.isRequired
     };
 
     constructor(props) {

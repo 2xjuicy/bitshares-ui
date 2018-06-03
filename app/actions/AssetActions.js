@@ -396,15 +396,13 @@ class AssetActions {
     //     });
     // }
 
-    getAssetList(start, count, includeGateways = false) {
+    getAssetList(start, count) {
         let id = start + "_" + count;
         return dispatch => {
             if (!inProgress[id]) {
-                let assets;
                 inProgress[id] = true;
                 dispatch({loading: true});
-
-                assets = Apis.instance()
+                return Apis.instance()
                     .db_api()
                     .exec("list_assets", [start, count])
                     .then(assets => {
@@ -452,22 +450,6 @@ class AssetActions {
                         dispatch({loading: false});
                         delete inProgress[id];
                     });
-
-                // Fetch next 10 assets for each gateAsset on request
-                if (includeGateways) {
-                    let gatewayPrefixes = [
-                        "BRIDGE",
-                        "GDEX",
-                        "RUDEX",
-                        "OPEN",
-                        "WIN"
-                    ];
-                    gatewayPrefixes.forEach(a => {
-                        this.getAssetList(a + "." + start, 10);
-                    });
-                }
-
-                return assets;
             }
         };
     }

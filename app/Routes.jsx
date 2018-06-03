@@ -1,6 +1,6 @@
 import React from "react";
 
-import {Route, IndexRoute, Redirect} from "react-router/es";
+import {Route, IndexRoute, Redirect, IndexRedirect} from "react-router/es";
 import willTransitionTo from "./routerTransition";
 import App from "./App";
 
@@ -28,19 +28,20 @@ function errorLoading(err) {
 
 const routes = (
     <Route path="/" component={App} onEnter={willTransitionTo}>
-        <IndexRoute
+        <IndexRedirect to="/dashboard" />
+        <Route path="/auth/:data" component={Auth} />
+        <Route
+            path="/dashboard"
             getComponent={(location, cb) => {
-                import("components/Dashboard/DashboardPage")
+                System.import("components/Dashboard/DashboardPage")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
         />
-        <Route path="/auth/:data" component={Auth} />
-
         <Route
             path="explorer"
             getComponent={(location, cb) => {
-                import("components/Explorer/Explorer")
+                System.import("components/Explorer/Explorer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -48,7 +49,7 @@ const routes = (
         <Route
             path="/explorer/fees"
             getComponent={(location, cb) => {
-                import("components/Explorer/FeesContainer")
+                System.import("components/Explorer/FeesContainer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -56,7 +57,7 @@ const routes = (
         <Route
             path="/explorer/blocks"
             getComponent={(location, cb) => {
-                import("components/Explorer/BlocksContainer")
+                System.import("components/Explorer/BlocksContainer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -64,7 +65,7 @@ const routes = (
         <Route
             path="/explorer/assets"
             getComponent={(location, cb) => {
-                import("components/Explorer/AssetsContainer")
+                System.import("components/Explorer/AssetsContainer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -72,7 +73,7 @@ const routes = (
         <Route
             path="/explorer/accounts"
             getComponent={(location, cb) => {
-                import("components/Explorer/AccountsContainer")
+                System.import("components/Explorer/AccountsContainer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -80,7 +81,7 @@ const routes = (
         <Route
             path="/explorer/witnesses"
             getComponent={(location, cb) => {
-                import("components/Explorer/Witnesses")
+                System.import("components/Explorer/Witnesses")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -88,7 +89,7 @@ const routes = (
         <Route
             path="/explorer/committee-members"
             getComponent={(location, cb) => {
-                import("components/Explorer/CommitteeMembers")
+                System.import("components/Explorer/CommitteeMembers")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -97,7 +98,7 @@ const routes = (
         <Route
             path="wallet"
             getComponent={(location, cb) => {
-                import("components/Wallet/WalletManager")
+                System.import("components/Wallet/WalletManager")
                     .then(loadRoute(cb, "WalletManager"))
                     .catch(errorLoading);
             }}
@@ -105,7 +106,7 @@ const routes = (
             {/* wallet management console */}
             <IndexRoute
                 getComponent={(location, cb) => {
-                    import("components/Wallet/WalletManager")
+                    System.import("components/Wallet/WalletManager")
                         .then(loadRoute(cb, "WalletOptions"))
                         .catch(errorLoading);
                 }}
@@ -113,7 +114,7 @@ const routes = (
             <Route
                 path="change"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/WalletManager")
+                    System.import("components/Wallet/WalletManager")
                         .then(loadRoute(cb, "ChangeActiveWallet"))
                         .catch(errorLoading);
                 }}
@@ -121,7 +122,7 @@ const routes = (
             <Route
                 path="change-password"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/WalletChangePassword")
+                    System.import("components/Wallet/WalletChangePassword")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -129,7 +130,7 @@ const routes = (
             <Route
                 path="import-keys"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/ImportKeys")
+                    System.import("components/Wallet/ImportKeys")
                         .then(loadRoute(cb, "ExistingAccountOptions"))
                         .catch(errorLoading);
                 }}
@@ -137,7 +138,7 @@ const routes = (
             <Route
                 path="brainkey"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/Brainkey")
+                    System.import("components/Wallet/Brainkey")
                         .then(loadRoute(cb, "ExistingAccountOptions"))
                         .catch(errorLoading);
                 }}
@@ -145,7 +146,7 @@ const routes = (
             <Route
                 path="create"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/WalletCreate")
+                    System.import("components/Wallet/WalletCreate")
                         .then(loadRoute(cb, "WalletCreate"))
                         .catch(errorLoading);
                 }}
@@ -153,7 +154,7 @@ const routes = (
             <Route
                 path="delete"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/WalletManager")
+                    System.import("components/Wallet/WalletManager")
                         .then(loadRoute(cb, "WalletDelete"))
                         .catch(errorLoading);
                 }}
@@ -161,7 +162,7 @@ const routes = (
             <Route
                 path="backup/restore"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/Backup")
+                    System.import("components/Wallet/Backup")
                         .then(loadRoute(cb, "BackupRestore"))
                         .catch(errorLoading);
                 }}
@@ -169,7 +170,7 @@ const routes = (
             <Route
                 path="backup/create"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/Backup")
+                    System.import("components/Wallet/Backup")
                         .then(loadRoute(cb, "BackupCreate"))
                         .catch(errorLoading);
                 }}
@@ -177,7 +178,7 @@ const routes = (
             <Route
                 path="backup/brainkey"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/BackupBrainkey")
+                    System.import("components/Wallet/BackupBrainkey")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -185,7 +186,7 @@ const routes = (
             <Route
                 path="balance-claims"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/BalanceClaimActive")
+                    System.import("components/Wallet/BalanceClaimActive")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -195,7 +196,7 @@ const routes = (
         <Route
             path="create-wallet"
             getComponent={(location, cb) => {
-                import("components/Wallet/WalletCreate")
+                System.import("components/Wallet/WalletCreate")
                     .then(loadRoute(cb, "WalletCreate"))
                     .catch(errorLoading);
             }}
@@ -204,7 +205,7 @@ const routes = (
         <Route
             path="create-wallet-brainkey"
             getComponent={(location, cb) => {
-                import("components/Wallet/WalletCreate")
+                System.import("components/Wallet/WalletCreate")
                     .then(loadRoute(cb, "CreateWalletFromBrainkey"))
                     .catch(errorLoading);
             }}
@@ -213,7 +214,7 @@ const routes = (
         <Route
             path="transfer"
             getComponent={(location, cb) => {
-                import("components/Transfer/Transfer")
+                System.import("components/Transfer/Transfer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -222,7 +223,7 @@ const routes = (
         <Route
             path="invoice/:data"
             getComponent={(location, cb) => {
-                import("components/Transfer/Invoice")
+                System.import("components/Transfer/Invoice")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -230,7 +231,7 @@ const routes = (
         <Route
             path="explorer/markets"
             getComponent={(location, cb) => {
-                import("components/Explorer/MarketsContainer")
+                System.import("components/Explorer/MarketsContainer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -238,7 +239,7 @@ const routes = (
         <Route
             path="market/:marketID"
             getComponent={(location, cb) => {
-                import("components/Exchange/ExchangeContainer")
+                System.import("components/Exchange/ExchangeContainer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -246,7 +247,7 @@ const routes = (
         <Route
             path="settings"
             getComponent={(location, cb) => {
-                import("components/Settings/SettingsContainer")
+                System.import("components/Settings/SettingsContainer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -254,7 +255,7 @@ const routes = (
         <Route
             path="settings/:tab"
             getComponent={(location, cb) => {
-                import("components/Settings/SettingsContainer")
+                System.import("components/Settings/SettingsContainer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -262,7 +263,7 @@ const routes = (
         <Route
             path="block/:height"
             getComponent={(location, cb) => {
-                import("components/Blockchain/BlockContainer")
+                System.import("components/Blockchain/BlockContainer")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -270,7 +271,7 @@ const routes = (
         <Route
             path="asset/:symbol"
             getComponent={(location, cb) => {
-                import("components/Blockchain/Asset")
+                System.import("components/Blockchain/Asset")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -278,7 +279,7 @@ const routes = (
         <Route
             path="create-account"
             getComponent={(location, cb) => {
-                import("components/LoginSelector")
+                System.import("components/LoginSelector")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -286,7 +287,7 @@ const routes = (
             <Route
                 path="wallet"
                 getComponent={(location, cb) => {
-                    import("components/Account/CreateAccount")
+                    System.import("components/Account/CreateAccount")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -294,7 +295,7 @@ const routes = (
             <Route
                 path="password"
                 getComponent={(location, cb) => {
-                    import("components/Account/CreateAccountPassword")
+                    System.import("components/Account/CreateAccountPassword")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -304,7 +305,7 @@ const routes = (
         <Route
             path="accounts"
             getComponent={(location, cb) => {
-                import("components/Dashboard/DashboardAccountsOnly")
+                System.import("components/Dashboard/DashboardAccountsOnly")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -313,14 +314,14 @@ const routes = (
         <Route
             path="existing-account"
             getComponent={(location, cb) => {
-                import("components/Wallet/ExistingAccount")
+                System.import("components/Wallet/ExistingAccount")
                     .then(loadRoute(cb, "ExistingAccount"))
                     .catch(errorLoading);
             }}
         >
             <IndexRoute
                 getComponent={(location, cb) => {
-                    import("components/Wallet/Backup")
+                    System.import("components/Wallet/Backup")
                         .then(loadRoute(cb, "BackupRestore"))
                         .catch(errorLoading);
                 }}
@@ -328,7 +329,7 @@ const routes = (
             <Route
                 path="import-backup"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/ExistingAccount")
+                    System.import("components/Wallet/ExistingAccount")
                         .then(loadRoute(cb, "ExistingAccountOptions"))
                         .catch(errorLoading);
                 }}
@@ -336,7 +337,7 @@ const routes = (
             <Route
                 path="import-keys"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/ImportKeys")
+                    System.import("components/Wallet/ImportKeys")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -344,7 +345,7 @@ const routes = (
             <Route
                 path="brainkey"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/Brainkey")
+                    System.import("components/Wallet/Brainkey")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -352,7 +353,7 @@ const routes = (
             <Route
                 path="balance-claim"
                 getComponent={(location, cb) => {
-                    import("components/Wallet/BalanceClaimActive")
+                    System.import("components/Wallet/BalanceClaimActive")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -362,32 +363,32 @@ const routes = (
         <Route
             path="/account/:account_name"
             getComponent={(location, cb) => {
-                import("components/Account/AccountPage")
+                System.import("components/Account/AccountPage")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
         >
             <IndexRoute
                 getComponent={(location, cb) => {
-                    import("components/Account/AccountOverview")
+                    System.import("components/Account/AccountOverview")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
             />
             {/* <Route path="dashboard" getComponent={(location, cb) => {
-                import("components/Account/AccountOverview").then(loadRoute(cb)).catch(errorLoading);
+                System.import("components/Account/AccountOverview").then(loadRoute(cb)).catch(errorLoading);
             }}/> */}
             {/* <Route path="deposit-withdraw" getComponent={(location, cb) => {
-                import("components/Account/AccountDepositWithdraw").then(loadRoute(cb)).catch(errorLoading);
+                System.import("components/Account/AccountDepositWithdraw").then(loadRoute(cb)).catch(errorLoading);
             }}/> */}
             {/* <Route path="orders" getComponent={(location, cb) => {
-                import("components/Account/AccountOrders").then(loadRoute(cb)).catch(errorLoading);
+                System.import("components/Account/AccountOrders").then(loadRoute(cb)).catch(errorLoading);
             }}/> */}
 
             <Route
                 path="assets"
                 getComponent={(location, cb) => {
-                    import("components/Account/AccountAssets")
+                    System.import("components/Account/AccountAssets")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -395,7 +396,7 @@ const routes = (
             <Route
                 path="create-asset"
                 getComponent={(location, cb) => {
-                    import("components/Account/AccountAssetCreate")
+                    System.import("components/Account/AccountAssetCreate")
                         .then(loadRoute(cb, "AccountAssetCreate"))
                         .catch(errorLoading);
                 }}
@@ -403,7 +404,7 @@ const routes = (
             <Route
                 path="update-asset/:asset"
                 getComponent={(location, cb) => {
-                    import("components/Account/AccountAssetUpdate")
+                    System.import("components/Account/AccountAssetUpdate")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -411,7 +412,7 @@ const routes = (
             <Route
                 path="member-stats"
                 getComponent={(location, cb) => {
-                    import("components/Account/AccountMembership")
+                    System.import("components/Account/AccountMembership")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -419,7 +420,7 @@ const routes = (
             <Route
                 path="vesting"
                 getComponent={(location, cb) => {
-                    import("components/Account/AccountVesting")
+                    System.import("components/Account/AccountVesting")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -427,7 +428,7 @@ const routes = (
             <Route
                 path="permissions"
                 getComponent={(location, cb) => {
-                    import("components/Account/AccountPermissions")
+                    System.import("components/Account/AccountPermissions")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -435,7 +436,7 @@ const routes = (
             <Route
                 path="voting"
                 getComponent={(location, cb) => {
-                    import("components/Account/AccountVoting")
+                    System.import("components/Account/AccountVoting")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -443,7 +444,7 @@ const routes = (
             <Route
                 path="whitelist"
                 getComponent={(location, cb) => {
-                    import("components/Account/AccountWhitelist")
+                    System.import("components/Account/AccountWhitelist")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -451,7 +452,7 @@ const routes = (
             <Route
                 path="signedmessages"
                 getComponent={(location, cb) => {
-                    import("components/Account/AccountSignedMessages")
+                    System.import("components/Account/AccountSignedMessages")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -463,7 +464,7 @@ const routes = (
         <Route
             path="deposit-withdraw"
             getComponent={(location, cb) => {
-                import("components/Account/AccountDepositWithdraw")
+                System.import("components/Account/AccountDepositWithdraw")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -471,7 +472,7 @@ const routes = (
         <Route
             path="create-worker"
             getComponent={(location, cb) => {
-                import("components/Account/CreateWorker")
+                System.import("components/Account/CreateWorker")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -479,7 +480,7 @@ const routes = (
         <Route
             path="/init-error"
             getComponent={(location, cb) => {
-                import("components/InitError")
+                System.import("components/InitError")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -487,7 +488,7 @@ const routes = (
         <Route
             path="/news"
             getComponent={(location, cb) => {
-                import("components/News")
+                System.import("components/News")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -495,7 +496,7 @@ const routes = (
         <Route
             path="/help"
             getComponent={(location, cb) => {
-                import("components/Help")
+                System.import("components/Help")
                     .then(loadRoute(cb))
                     .catch(errorLoading);
             }}
@@ -503,7 +504,7 @@ const routes = (
             <Route
                 path=":path1"
                 getComponent={(location, cb) => {
-                    import("components/Help")
+                    System.import("components/Help")
                         .then(loadRoute(cb))
                         .catch(errorLoading);
                 }}
@@ -511,7 +512,7 @@ const routes = (
                 <Route
                     path=":path2"
                     getComponent={(location, cb) => {
-                        import("components/Help")
+                        System.import("components/Help")
                             .then(loadRoute(cb))
                             .catch(errorLoading);
                     }}
@@ -519,7 +520,7 @@ const routes = (
                     <Route
                         path=":path3"
                         getComponent={(location, cb) => {
-                            import("components/Help")
+                            System.import("components/Help")
                                 .then(loadRoute(cb))
                                 .catch(errorLoading);
                         }}
@@ -529,11 +530,7 @@ const routes = (
         </Route>
         <Route
             path="*"
-            getComponent={(location, cb) => {
-                import("components/Page404/Page404")
-                    .then(loadRoute(cb))
-                    .catch(errorLoading);
-            }}
+            component={System.import("components/Page404/Page404")}
         />
     </Route>
 );
