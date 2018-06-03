@@ -306,19 +306,22 @@ class RootIntl extends React.Component {
     }
 }
 
-RootIntl = connect(RootIntl, {
-    listenTo() {
-        return [IntlStore, WalletManagerStore, SettingsStore];
-    },
-    getProps() {
-        return {
-            locale: IntlStore.getState().currentLocale,
-            walletMode:
-                !SettingsStore.getState().settings.get("passwordLogin") ||
-                !!WalletManagerStore.getState().current_wallet
-        };
+RootIntl = connect(
+    RootIntl,
+    {
+        listenTo() {
+            return [IntlStore, WalletManagerStore, SettingsStore];
+        },
+        getProps() {
+            return {
+                locale: IntlStore.getState().currentLocale,
+                walletMode:
+                    !SettingsStore.getState().settings.get("passwordLogin") ||
+                    !!WalletManagerStore.getState().current_wallet
+            };
+        }
     }
-});
+);
 
 class Root extends React.Component {
     static childContextTypes = {

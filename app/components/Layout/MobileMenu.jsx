@@ -141,29 +141,32 @@ class MobileMenu extends React.Component {
     }
 }
 
-MobileMenu = connect(MobileMenu, {
-    listenTo() {
-        return [
-            AccountStore,
-            WalletUnlockStore,
-            WalletManagerStore,
-            SettingsStore
-        ];
-    },
-    getProps() {
-        const chainID = Apis.instance().chain_id;
-        return {
-            myActiveAccounts: AccountStore.getState().myActiveAccounts,
-            currentAccount: AccountStore.getState().currentAccount,
-            locked: WalletUnlockStore.getState().locked,
-            current_wallet: WalletManagerStore.getState().current_wallet,
-            lastMarket: SettingsStore.getState().viewSettings.get(
-                `lastMarket${chainID ? "_" + chainID.substr(0, 8) : ""}`
-            ),
-            myAccounts: AccountStore.getMyAccounts()
-        };
+MobileMenu = connect(
+    MobileMenu,
+    {
+        listenTo() {
+            return [
+                AccountStore,
+                WalletUnlockStore,
+                WalletManagerStore,
+                SettingsStore
+            ];
+        },
+        getProps() {
+            const chainID = Apis.instance().chain_id;
+            return {
+                myActiveAccounts: AccountStore.getState().myActiveAccounts,
+                currentAccount: AccountStore.getState().currentAccount,
+                locked: WalletUnlockStore.getState().locked,
+                current_wallet: WalletManagerStore.getState().current_wallet,
+                lastMarket: SettingsStore.getState().viewSettings.get(
+                    `lastMarket${chainID ? "_" + chainID.substr(0, 8) : ""}`
+                ),
+                myAccounts: AccountStore.getMyAccounts()
+            };
+        }
     }
-});
+);
 
 export default class WidthWrapper extends React.Component {
     constructor() {

@@ -193,7 +193,9 @@ class PasswordInput extends Component {
                                 className={
                                     score === 5
                                         ? "high"
-                                        : score === 4 ? "medium" : "low"
+                                        : score === 4
+                                            ? "medium"
+                                            : "low"
                                 }
                                 value={score}
                                 max="5"

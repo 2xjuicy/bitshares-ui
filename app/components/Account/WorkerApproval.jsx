@@ -61,14 +61,16 @@ class WorkerApproval extends React.Component {
         let total_votes = worker.total_votes_for - worker.total_votes_against;
         let approvalState = this.props.vote_ids.has(worker.vote_for)
             ? true
-            : this.props.vote_ids.has(worker.vote_against) ? false : null;
+            : this.props.vote_ids.has(worker.vote_against)
+                ? false
+                : null;
 
         let fundedPercent = 0;
 
         if (worker.daily_pay < this.props.rest) {
             fundedPercent = 100;
         } else if (this.props.rest > 0) {
-            fundedPercent = this.props.rest / worker.daily_pay * 100;
+            fundedPercent = (this.props.rest / worker.daily_pay) * 100;
         }
 
         let startDate = counterpart.localize(

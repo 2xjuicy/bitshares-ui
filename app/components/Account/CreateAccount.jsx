@@ -564,11 +564,14 @@ class CreateAccount extends React.Component {
     }
 }
 
-export default connect(CreateAccount, {
-    listenTo() {
-        return [AccountStore];
-    },
-    getProps() {
-        return {};
+export default connect(
+    CreateAccount,
+    {
+        listenTo() {
+            return [AccountStore];
+        },
+        getProps() {
+            return {};
+        }
     }
-});
+);

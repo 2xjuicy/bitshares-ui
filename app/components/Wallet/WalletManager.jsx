@@ -74,7 +74,10 @@ class WalletManager extends Component {
         );
     }
 }
-WalletManager = connect(WalletManager, connectObject);
+WalletManager = connect(
+    WalletManager,
+    connectObject
+);
 
 class WalletOptions extends Component {
     render() {
@@ -203,7 +206,10 @@ class WalletOptions extends Component {
         );
     }
 }
-WalletOptions = connect(WalletOptions, connectObject);
+WalletOptions = connect(
+    WalletOptions,
+    connectObject
+);
 
 class ChangeActiveWallet extends Component {
     constructor() {
@@ -305,7 +311,10 @@ class ChangeActiveWallet extends Component {
         this.setState({current_wallet});
     }
 }
-ChangeActiveWallet = connect(ChangeActiveWallet, connectObject);
+ChangeActiveWallet = connect(
+    ChangeActiveWallet,
+    connectObject
+);
 
 class WalletDelete extends Component {
     constructor() {
@@ -437,6 +446,9 @@ class WalletDelete extends Component {
         this.setState({selected_wallet});
     }
 }
-WalletDelete = connect(WalletDelete, connectObject);
+WalletDelete = connect(
+    WalletDelete,
+    connectObject
+);
 
 export {WalletManager, WalletOptions, ChangeActiveWallet, WalletDelete};

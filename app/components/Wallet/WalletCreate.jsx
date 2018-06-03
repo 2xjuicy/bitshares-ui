@@ -239,14 +239,17 @@ class CreateNewWallet extends Component {
     }
 }
 
-CreateNewWallet = connect(CreateNewWallet, {
-    listenTo() {
-        return [WalletManagerStore];
-    },
-    getProps() {
-        return WalletManagerStore.getState();
+CreateNewWallet = connect(
+    CreateNewWallet,
+    {
+        listenTo() {
+            return [WalletManagerStore];
+        },
+        getProps() {
+            return WalletManagerStore.getState();
+        }
     }
-});
+);
 
 class WalletCreate extends Component {
     render() {

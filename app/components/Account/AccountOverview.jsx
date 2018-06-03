@@ -675,7 +675,9 @@ class AccountOverview extends React.Component {
                             market = "USD";
                         let preferredMarket = market
                             ? market
-                            : core_asset ? core_asset.get("symbol") : "BTS";
+                            : core_asset
+                                ? core_asset.get("symbol")
+                                : "BTS";
                         let directMarketLink = notCore ? (
                             <Link
                                 to={`/market/${asset.get(

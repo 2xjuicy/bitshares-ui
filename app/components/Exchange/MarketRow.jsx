@@ -138,7 +138,9 @@ class MarketRow extends React.Component {
                         let changeClass =
                             change === "0.00"
                                 ? ""
-                                : change > 0 ? "change-up" : "change-down";
+                                : change > 0
+                                    ? "change-up"
+                                    : "change-down";
 
                         return (
                             <td
@@ -223,7 +225,9 @@ class MarketRow extends React.Component {
                                     finalPrice,
                                     finalPrice > 1000
                                         ? 0
-                                        : finalPrice > 10 ? 2 : precision
+                                        : finalPrice > 10
+                                            ? 2
+                                            : precision
                                 )}
                             </td>
                         );
