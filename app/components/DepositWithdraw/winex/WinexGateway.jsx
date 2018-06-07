@@ -315,16 +315,13 @@ class WinexGateway extends React.Component {
     }
 }
 
-export default connect(
-    WinexGateway,
-    {
-        listenTo() {
-            return [SettingsStore];
-        },
-        getProps() {
-            return {
-                viewSettings: SettingsStore.getState().viewSettings
-            };
-        }
+export default connect(WinexGateway, {
+    listenTo() {
+        return [SettingsStore];
+    },
+    getProps() {
+        return {
+            viewSettings: SettingsStore.getState().viewSettings
+        };
     }
-);
+});

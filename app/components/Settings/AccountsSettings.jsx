@@ -87,19 +87,16 @@ class AccountsSettings extends React.Component {
     }
 }
 
-AccountsSettings = connect(
-    AccountsSettings,
-    {
-        listenTo() {
-            return [AccountStore];
-        },
-        getProps() {
-            return {
-                myAccounts: AccountStore.getMyAccounts(),
-                hiddenAccounts: AccountStore.getState().myHiddenAccounts
-            };
-        }
+AccountsSettings = connect(AccountsSettings, {
+    listenTo() {
+        return [AccountStore];
+    },
+    getProps() {
+        return {
+            myAccounts: AccountStore.getMyAccounts(),
+            hiddenAccounts: AccountStore.getState().myHiddenAccounts
+        };
     }
-);
+});
 
 export default AccountsSettings;

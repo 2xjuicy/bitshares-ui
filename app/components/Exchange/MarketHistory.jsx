@@ -291,16 +291,13 @@ MarketHistory.propTypes = {
     history: PropTypes.object.isRequired
 };
 
-export default connect(
-    MarketHistory,
-    {
-        listenTo() {
-            return [SettingsStore];
-        },
-        getProps() {
-            return {
-                viewSettings: SettingsStore.getState().viewSettings
-            };
-        }
+export default connect(MarketHistory, {
+    listenTo() {
+        return [SettingsStore];
+    },
+    getProps() {
+        return {
+            viewSettings: SettingsStore.getState().viewSettings
+        };
     }
-);
+});

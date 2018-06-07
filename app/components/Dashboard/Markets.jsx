@@ -22,19 +22,16 @@ class StarredMarkets extends React.Component {
         return <MarketsTable markets={markets} forceDirection={true} />;
     }
 }
-StarredMarkets = connect(
-    StarredMarkets,
-    {
-        listenTo() {
-            return [SettingsStore];
-        },
-        getProps() {
-            return {
-                starredMarkets: SettingsStore.getState().starredMarkets
-            };
-        }
+StarredMarkets = connect(StarredMarkets, {
+    listenTo() {
+        return [SettingsStore];
+    },
+    getProps() {
+        return {
+            starredMarkets: SettingsStore.getState().starredMarkets
+        };
     }
-);
+});
 
 class FeaturedMarkets extends React.Component {
     constructor() {
@@ -162,19 +159,16 @@ class FeaturedMarkets extends React.Component {
     }
 }
 
-FeaturedMarkets = connect(
-    FeaturedMarkets,
-    {
-        listenTo() {
-            return [MarketsStore];
-        },
-        getProps() {
-            return {
-                lowVolumeMarkets: MarketsStore.getState().lowVolumeMarkets
-            };
-        }
+FeaturedMarkets = connect(FeaturedMarkets, {
+    listenTo() {
+        return [MarketsStore];
+    },
+    getProps() {
+        return {
+            lowVolumeMarkets: MarketsStore.getState().lowVolumeMarkets
+        };
     }
-);
+});
 
 class TopMarkets extends React.Component {
     render() {

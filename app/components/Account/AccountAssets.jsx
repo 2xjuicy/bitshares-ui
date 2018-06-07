@@ -400,23 +400,20 @@ AccountAssets = AssetWrapper(AccountAssets, {
     withDynamic: true
 });
 
-export default connect(
-    AccountAssets,
-    {
-        listenTo() {
-            return [AssetStore];
-        },
-        getProps(props) {
-            let assets = Map(),
-                assetsList = List();
-            if (props.account.get("assets", []).size) {
-                props.account.get("assets", []).forEach(id => {
-                    assetsList = assetsList.push(id);
-                });
-            } else {
-                assets = AssetStore.getState().assets;
-            }
-            return {assets, assetsList};
+export default connect(AccountAssets, {
+    listenTo() {
+        return [AssetStore];
+    },
+    getProps(props) {
+        let assets = Map(),
+            assetsList = List();
+        if (props.account.get("assets", []).size) {
+            props.account.get("assets", []).forEach(id => {
+                assetsList = assetsList.push(id);
+            });
+        } else {
+            assets = AssetStore.getState().assets;
         }
+        return {assets, assetsList};
     }
-);
+});

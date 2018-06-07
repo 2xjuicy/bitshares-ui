@@ -567,18 +567,15 @@ class AccountsListWrapper extends React.Component {
     }
 }
 
-export default connect(
-    AccountsListWrapper,
-    {
-        listenTo() {
-            return [SettingsStore, WalletUnlockStore, AccountStore];
-        },
-        getProps() {
-            return {
-                locked: WalletUnlockStore.getState().locked,
-                starredAccounts: AccountStore.getState().starredAccounts,
-                viewSettings: SettingsStore.getState().viewSettings
-            };
-        }
+export default connect(AccountsListWrapper, {
+    listenTo() {
+        return [SettingsStore, WalletUnlockStore, AccountStore];
+    },
+    getProps() {
+        return {
+            locked: WalletUnlockStore.getState().locked,
+            starredAccounts: AccountStore.getState().starredAccounts,
+            viewSettings: SettingsStore.getState().viewSettings
+        };
     }
-);
+});

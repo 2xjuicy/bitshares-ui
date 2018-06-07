@@ -821,9 +821,7 @@ class AccountAssetUpdate extends React.Component {
                 this._onUpdateDescription.bind(this, "visible"),
                 update.description.visible
                     ? false
-                    : update.description.visible === false
-                        ? true
-                        : false
+                    : update.description.visible === false ? true : false
             )
         );
 

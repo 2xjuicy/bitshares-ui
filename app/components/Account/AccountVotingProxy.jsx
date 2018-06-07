@@ -173,9 +173,7 @@ class AccountVotingProxy extends React.Component {
             .sort((a, b) => {
                 return a.get("name") > b.get("name")
                     ? 1
-                    : a.get("name") < b.get("name")
-                        ? -1
-                        : 0;
+                    : a.get("name") < b.get("name") ? -1 : 0;
             })
             .map(proxy => {
                 return (

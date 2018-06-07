@@ -93,9 +93,7 @@ export default class ExchangeHeader extends React.Component {
         const dayChangeClass =
             parseFloat(dayChange) === 0
                 ? ""
-                : parseFloat(dayChange) < 0
-                    ? "negative"
-                    : "positive";
+                : parseFloat(dayChange) < 0 ? "negative" : "positive";
         const volumeBase = marketStats.get("volumeBase");
         const volumeQuote = marketStats.get("volumeQuote");
         const dayChangeWithSign = dayChange > 0 ? "+" + dayChange : dayChange;
@@ -147,9 +145,7 @@ export default class ExchangeHeader extends React.Component {
             let settleAsset =
                 baseAsset.get("id") == "1.3.0"
                     ? quoteAsset
-                    : quoteAsset.get("id") == "1.3.0"
-                        ? baseAsset
-                        : null;
+                    : quoteAsset.get("id") == "1.3.0" ? baseAsset : null;
 
             if (settleAsset && feedPrice) {
                 let offset_percent = settleAsset

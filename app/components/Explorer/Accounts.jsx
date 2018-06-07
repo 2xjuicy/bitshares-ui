@@ -93,19 +93,16 @@ let AccountRowWrapper = props => {
     return <AccountRow {...props} />;
 };
 
-AccountRowWrapper = connect(
-    AccountRowWrapper,
-    {
-        listenTo() {
-            return [AccountStore];
-        },
-        getProps() {
-            return {
-                contacts: AccountStore.getState().accountContacts
-            };
-        }
+AccountRowWrapper = connect(AccountRowWrapper, {
+    listenTo() {
+        return [AccountStore];
+    },
+    getProps() {
+        return {
+            contacts: AccountStore.getState().accountContacts
+        };
     }
-);
+});
 
 class Accounts extends React.Component {
     constructor(props) {

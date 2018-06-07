@@ -673,14 +673,11 @@ class CreateAccountPassword extends React.Component {
     }
 }
 
-export default connect(
-    CreateAccountPassword,
-    {
-        listenTo() {
-            return [AccountStore];
-        },
-        getProps() {
-            return {};
-        }
+export default connect(CreateAccountPassword, {
+    listenTo() {
+        return [AccountStore];
+    },
+    getProps() {
+        return {};
     }
-);
+});

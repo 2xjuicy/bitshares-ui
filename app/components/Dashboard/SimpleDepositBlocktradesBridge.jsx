@@ -703,22 +703,19 @@ class StoreWrapper extends React.Component {
     }
 }
 
-StoreWrapper = connect(
-    StoreWrapper,
-    {
-        listenTo() {
-            return [SettingsStore];
-        },
-        getProps() {
-            return {
-                preferredBridge: SettingsStore.getState().viewSettings.get(
-                    "preferredBridge",
-                    "btc"
-                )
-            };
-        }
+StoreWrapper = connect(StoreWrapper, {
+    listenTo() {
+        return [SettingsStore];
+    },
+    getProps() {
+        return {
+            preferredBridge: SettingsStore.getState().viewSettings.get(
+                "preferredBridge",
+                "btc"
+            )
+        };
     }
-);
+});
 
 export default class SimpleDepositBlocktradesBridgeModal extends React.Component {
     constructor() {

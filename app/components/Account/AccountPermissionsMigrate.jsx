@@ -75,9 +75,7 @@ export default class AccountPermissionsMigrate extends React.Component {
             this.props[
                 role === "active"
                     ? "onAddActive"
-                    : role === "owner"
-                        ? "onAddOwner"
-                        : "onSetMemo"
+                    : role === "owner" ? "onAddOwner" : "onSetMemo"
             ](this.props[role], weights[role]);
         }
     }

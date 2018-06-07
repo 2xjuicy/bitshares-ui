@@ -54,16 +54,13 @@ class Page404 extends React.Component {
     }
 }
 
-export default (Page404 = connect(
-    Page404,
-    {
-        listenTo() {
-            return [SettingsStore];
-        },
-        getProps() {
-            return {
-                theme: SettingsStore.getState().settings.get("themes")
-            };
-        }
+export default (Page404 = connect(Page404, {
+    listenTo() {
+        return [SettingsStore];
+    },
+    getProps() {
+        return {
+            theme: SettingsStore.getState().settings.get("themes")
+        };
     }
-));
+}));

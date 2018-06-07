@@ -433,23 +433,20 @@ class CommitteeMembersStoreWrapper extends React.Component {
     }
 }
 
-CommitteeMembersStoreWrapper = connect(
-    CommitteeMembersStoreWrapper,
-    {
-        listenTo() {
-            return [SettingsStore];
-        },
-        getProps() {
-            return {
-                cardView: SettingsStore.getState().viewSettings.get(
-                    "cardViewCommittee"
-                ),
-                filterCommitteeMember: SettingsStore.getState().viewSettings.get(
-                    "filterCommitteeMember"
-                )
-            };
-        }
+CommitteeMembersStoreWrapper = connect(CommitteeMembersStoreWrapper, {
+    listenTo() {
+        return [SettingsStore];
+    },
+    getProps() {
+        return {
+            cardView: SettingsStore.getState().viewSettings.get(
+                "cardViewCommittee"
+            ),
+            filterCommitteeMember: SettingsStore.getState().viewSettings.get(
+                "filterCommitteeMember"
+            )
+        };
     }
-);
+});
 
 export default CommitteeMembersStoreWrapper;

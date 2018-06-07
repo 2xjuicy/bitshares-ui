@@ -307,16 +307,13 @@ class BlockTradesGateway extends React.Component {
     }
 }
 
-export default connect(
-    BlockTradesGateway,
-    {
-        listenTo() {
-            return [SettingsStore];
-        },
-        getProps() {
-            return {
-                viewSettings: SettingsStore.getState().viewSettings
-            };
-        }
+export default connect(BlockTradesGateway, {
+    listenTo() {
+        return [SettingsStore];
+    },
+    getProps() {
+        return {
+            viewSettings: SettingsStore.getState().viewSettings
+        };
     }
-);
+});

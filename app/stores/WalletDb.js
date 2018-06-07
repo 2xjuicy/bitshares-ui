@@ -442,8 +442,9 @@ class WalletDb extends BaseStore {
                         if (!foundRole) {
                             let alsoCheckRole =
                                 role === "active" ? "owner" : "active";
-                            acc.getIn([alsoCheckRole, "key_auths"]).forEach(
-                                auth => {
+                            acc
+                                .getIn([alsoCheckRole, "key_auths"])
+                                .forEach(auth => {
                                     if (auth.get(0) === key.pubKey) {
                                         setKey(
                                             alsoCheckRole,
@@ -453,8 +454,7 @@ class WalletDb extends BaseStore {
                                         foundRole = true;
                                         return false;
                                     }
-                                }
-                            );
+                                });
                         }
                     }
                 }
