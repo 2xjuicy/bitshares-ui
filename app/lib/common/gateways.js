@@ -8,7 +8,8 @@ import {
     widechainAPIs,
     openledgerAPIs,
     cryptoBridgeAPIs,
-    gdex2APIs
+    gdex2APIs,
+    citadelAPIs
 } from "api/apiConfig";
 
 export const availableGateways = {
@@ -69,6 +70,21 @@ export const availableGateways = {
         name: "GDEX",
         baseAPI: gdex2APIs,
         isEnabled: true,
+        options: {
+            enabled: false,
+            selected: false
+        }
+    },
+    CITADEL: {
+        id: "CITADEL",
+        name: "CITADEL",
+        baseAPI: citadelAPIs,
+        isEnabled: true,
+        isSimple: true,
+        selected: false,
+        simpleAssetGateway: true,
+        fixedMemo: {prepend: "dex:", append: ""},
+        addressValidatorMethod: "POST",
         options: {
             enabled: false,
             selected: false
