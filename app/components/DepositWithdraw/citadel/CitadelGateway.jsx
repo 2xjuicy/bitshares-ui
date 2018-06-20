@@ -20,7 +20,6 @@ class CitadelGateway extends React.Component {
             `${props.provider}Action`,
             "deposit"
         );
-
         this.state = {
             activeCoin: this._getActiveCoin(props, {action}),
             action

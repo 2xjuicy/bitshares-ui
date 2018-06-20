@@ -80,11 +80,7 @@ export const availableGateways = {
         name: "CITADEL",
         baseAPI: citadelAPIs,
         isEnabled: true,
-        isSimple: true,
         selected: false,
-        simpleAssetGateway: true,
-        fixedMemo: {prepend: "dex:", append: ""},
-        addressValidatorMethod: "POST",
         options: {
             enabled: false,
             selected: false

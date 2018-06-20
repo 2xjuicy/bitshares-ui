@@ -465,8 +465,8 @@ class CitadelBridgeDepositRequest extends React.Component {
         };
 
         this.state = {
-            coin_symbol: "btc",
-            key_for_withdrawal_dialog: "btc",
+            coin_symbol: "xmr",
+            key_for_withdrawal_dialog: "xmr",
             supports_output_memos: "",
             url: citadelAPIs.BASE,
             error: null,
@@ -515,7 +515,7 @@ class CitadelBridgeDepositRequest extends React.Component {
             deposit_limit_cache: {},
             deposit_limit_requests_in_progress: {},
 
-            // generic data from Citadel
+            // generic data from BlockTrades
             coins_by_type: null,
             allowed_mappings_for_deposit: null,
             allowed_mappings_for_withdraw: null,
@@ -532,31 +532,7 @@ class CitadelBridgeDepositRequest extends React.Component {
             url: checkUrl
         });
 
-        let announcements_url = checkUrl + "/announcements/enabled/trade";
-        let announcements_promise = fetch(announcements_url, {
-            method: "get",
-            headers: new Headers({Accept: "application/json"})
-        }).then(response => response.json());
-
-        Promise.resolve(announcements_promise)
-            .then(result => {
-                result.sort((a, b) => {
-                    if (a.priority < b.priority) return -1;
-                    if (a.priority > b.priority) return 1;
-                    return 0;
-                });
-
-                this.setState({
-                    announcements: result
-                });
-            })
-            .catch(error => {
-                this.setState({
-                    announcements: []
-                });
-            });
-
-        // get basic data from blocktrades
+        // get basic data from citadel
         let coin_types_url = checkUrl + "/coins";
         let coin_types_promise = fetch(coin_types_url, {
             method: "get",
@@ -612,12 +588,12 @@ class CitadelBridgeDepositRequest extends React.Component {
                     // filter out pairs where one asset is a backed asset and the other is a backing asset,
                     // those pairs rightly belong under the gateway section, not under the bridge section.
                     if (
-                        input_coin_info.backingCoinType !=
-                            pair.outputCoinType &&
-                        output_coin_info.backingCoinType !=
+                        input_coin_info.backingCoinType ==
+                            pair.outputCoinType ||
+                        (output_coin_info.backingCoinType ==
                             pair.inputCoinType &&
-                        input_coin_info.restricted == false &&
-                        output_coin_info.restricted == false
+                            input_coin_info.restricted == false &&
+                            output_coin_info.restricted == false)
                     ) {
                         // filter out mappings where one of the wallets is offline
                         if (
@@ -629,7 +605,7 @@ class CitadelBridgeDepositRequest extends React.Component {
                             ) != -1
                         ) {
                             if (
-                                input_coin_info.walletType != "bitshares2" &&
+                                input_coin_info.walletType == "monero" &&
                                 output_coin_info.walletType == "bitshares2"
                             ) {
                                 allowed_mappings_for_deposit[
@@ -641,10 +617,7 @@ class CitadelBridgeDepositRequest extends React.Component {
                                 allowed_mappings_for_deposit[
                                     pair.inputCoinType
                                 ].push(pair.outputCoinType);
-                            } else if (
-                                input_coin_info.walletType == "bitshares2" &&
-                                output_coin_info.walletType != "bitshares2"
-                            ) {
+                            } else {
                                 allowed_mappings_for_withdraw[
                                     pair.inputCoinType
                                 ] =
@@ -652,19 +625,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                                         pair.inputCoinType
                                     ] || [];
                                 allowed_mappings_for_withdraw[
-                                    pair.inputCoinType
-                                ].push(pair.outputCoinType);
-                            } else if (
-                                input_coin_info.walletType == "bitshares2" &&
-                                output_coin_info.walletType == "bitshares2"
-                            ) {
-                                allowed_mappings_for_conversion[
-                                    pair.inputCoinType
-                                ] =
-                                    allowed_mappings_for_conversion[
-                                        pair.inputCoinType
-                                    ] || [];
-                                allowed_mappings_for_conversion[
                                     pair.inputCoinType
                                 ].push(pair.outputCoinType);
                             }
@@ -851,7 +811,7 @@ class CitadelBridgeDepositRequest extends React.Component {
                     conversion_estimate_direction: this.estimation_directions
                         .output_from_input,
                     supports_output_memos:
-                        coins_by_type["btc"].supportsOutputMemos
+                        coins_by_type["xmr"].supportsOutputMemos
                 });
             })
             .catch(error => {
@@ -979,7 +939,7 @@ class CitadelBridgeDepositRequest extends React.Component {
     }
 
     componentWillMount() {
-        // check api.blocktrades.us/v2
+        // check
         let checkUrl = this.state.url;
         this.urlConnection(checkUrl, 0);
         let coin_types_promisecheck = fetch(checkUrl + "/coins", {
@@ -1225,6 +1185,7 @@ class CitadelBridgeDepositRequest extends React.Component {
             input_coin_type,
             output_coin_type
         );
+
         if (deposit_limit_record) return deposit_limit_record;
 
         this.state.deposit_limit_requests_in_progress[input_coin_type] =
@@ -1240,6 +1201,7 @@ class CitadelBridgeDepositRequest extends React.Component {
             encodeURIComponent(input_coin_type) +
             "&outputCoinType=" +
             encodeURIComponent(output_coin_type);
+
         let deposit_limit_promise = fetch(deposit_limit_url, {
             method: "get",
             headers: new Headers({Accept: "application/json"})
@@ -1316,6 +1278,7 @@ class CitadelBridgeDepositRequest extends React.Component {
             encodeURIComponent(input_coin_type) +
             "&outputCoinType=" +
             encodeURIComponent(output_coin_type);
+
         let estimate_output_promise = fetch(estimate_output_url, {
             method: "get",
             headers: new Headers({Accept: "application/json"})
@@ -1323,7 +1286,6 @@ class CitadelBridgeDepositRequest extends React.Component {
         estimate_output_promise.then(
             reply => {
                 if (this.unMounted) return;
-                // console.log("Reply: ", reply);
                 if (reply.error) {
                     if (
                         this.state[
@@ -1563,6 +1525,7 @@ class CitadelBridgeDepositRequest extends React.Component {
             "allowed_mappings_for_" + deposit_withdraw_or_convert
         ][new_input_coin_type];
         let new_output_coin_type = possible_output_coin_types[0];
+
         if (
             possible_output_coin_types.indexOf(
                 this.state[deposit_withdraw_or_convert + "_output_coin_type"]
@@ -1737,8 +1700,7 @@ class CitadelBridgeDepositRequest extends React.Component {
             return (
                 <div>
                     <p>
-                        Error connecting to blocktrades.us, please try again
-                        later
+                        Error connecting to citadel.li, please try again later
                     </p>
                 </div>
             );
@@ -1750,7 +1712,7 @@ class CitadelBridgeDepositRequest extends React.Component {
         ) {
             return (
                 <div>
-                    <p>Retrieving current trade data from blocktrades.us</p>
+                    <p>Retrieving current trade data from citadel.li</p>
                 </div>
             );
         } else {

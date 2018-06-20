@@ -41,7 +41,7 @@ class AccountDepositWithdraw extends React.Component {
             olService: props.viewSettings.get("olService", "gateway"),
             rudexService: props.viewSettings.get("rudexService", "gateway"),
             btService: props.viewSettings.get("btService", "bridge"),
-            citadelService: props.viewSettings.get("citadelService", "gateway"),
+            citadelService: props.viewSettings.get("citadelService", "bridge"),
             metaService: props.viewSettings.get("metaService", "bridge"),
             activeService: props.viewSettings.get("activeService", 0)
         };
@@ -137,11 +137,7 @@ class AccountDepositWithdraw extends React.Component {
         });
     }
 
-    renderServices(
-        openLedgerGatewayCoins,
-        rudexGatewayCoins,
-        citadelGatewayCoins
-    ) {
+    renderServices(openLedgerGatewayCoins, rudexGatewayCoins) {
         //let services = ["Openledger (OPEN.X)", "BlockTrades (TRADE.X)", "Transwiser", "BitKapital"];
         let serList = [];
         let {account} = this.props;
@@ -327,107 +323,52 @@ class AccountDepositWithdraw extends React.Component {
             )
         });
 
-        // serList.push({
-        //     name: "Citadel",
-        //     template: (
-        //         <div>
-        //             <div className="content-block">
-        //                 {/* <div className="float-right"><a href="https://blocktrades.us" target="__blank" rel="noopener noreferrer"><Translate content="gateway.website" /></a></div> */}
-
-        //                 <div
-        //                     className="service-selector"
-        //                     style={{marginBottom: "2rem"}}
-        //                 >
-        //                     <ul className="button-group segmented no-margin">
-        //                         <li
-        //                             onClick={this.toggleCitadelService.bind(
-        //                                 this,
-        //                                 "bridge"
-        //                             )}
-        //                             className={
-        //                                 citadelService === "bridge"
-        //                                     ? "is-active"
-        //                                     : ""
-        //                             }
-        //                         >
-        //                             <a>
-        //                                 <Translate content="gateway.bridge" />
-        //                             </a>
-        //                         </li>
-        //                     </ul>
-        //                 </div>
-
-        //                 <CitadelBridgeDepositRequest
-        //                     gateway="citadel"
-        //                     issuer_account="citadel"
-        //                     account={account}
-        //                     initial_deposit_input_coin_type="hmr"
-        //                     initial_deposit_output_coin_type="hmr"
-        //                     initial_deposit_estimated_input_amount="1.0"
-        //                     initial_withdraw_input_coin_type="hmr"
-        //                     initial_withdraw_output_coin_type="hmr"
-        //                     initial_withdraw_estimated_input_amount="100000"
-        //                     initial_conversion_input_coin_type="hmr"
-        //                     initial_conversion_output_coin_type="hmr"
-        //                     initial_conversion_estimated_input_amount="1000"
-        //                 />
-        //             </div>
-        //             <div className="content-block" />
-        //         </div>
-        //     )
-        // });
-
         serList.push({
             name: "Citadel",
             template: (
-                <div className="content-block">
-                    <div
-                        className="service-selector"
-                        style={{marginBottom: "2rem"}}
-                    >
-                        <ul className="button-group segmented no-margin">
-                            <li
-                                onClick={this.toggleCitadelService.bind(
-                                    this,
-                                    "gateway"
-                                )}
-                                className={
-                                    citadelService === "gateway"
-                                        ? "is-active"
-                                        : ""
-                                }
-                            >
-                                <a>
-                                    <Translate content="gateway.gateway" />
-                                </a>
-                            </li>
-                            <li
-                                onClick={this.toggleCitadelService.bind(
-                                    this,
-                                    "fiat"
-                                )}
-                                className={
-                                    citadelService === "fiat" ? "is-active" : ""
-                                }
-                            >
-                                <a>Fiat</a>
-                            </li>
-                        </ul>
-                    </div>
+                <div>
+                    <div className="content-block">
+                        {/* <div className="float-right"><a href="https://blocktrades.us" target="__blank" rel="noopener noreferrer"><Translate content="gateway.website" /></a></div> */}
 
-                    {citadelService === "gateway" &&
-                    citadelGatewayCoins.length ? (
-                        <CitadelGateway
-                            account={account}
-                            coins={citadelGatewayCoins}
-                        />
-                    ) : null}
-
-                    {citadelService === "fiat" ? (
-                        <div>
-                            <Translate content="gateway.citadel.coming_soon" />
+                        <div
+                            className="service-selector"
+                            style={{marginBottom: "2rem"}}
+                        >
+                            <ul className="button-group segmented no-margin">
+                                <li
+                                    onClick={this.toggleCitadelService.bind(
+                                        this,
+                                        "bridge"
+                                    )}
+                                    className={
+                                        citadelService === "bridge"
+                                            ? "is-active"
+                                            : ""
+                                    }
+                                >
+                                    <a>
+                                        <Translate content="gateway.bridge" />
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
-                    ) : null}
+
+                        <CitadelBridgeDepositRequest
+                            gateway="citadel"
+                            issuer_account="citadel-wallet"
+                            account={account}
+                            initial_deposit_input_coin_type="xmr"
+                            initial_deposit_output_coin_type="citadel.monero"
+                            initial_deposit_estimated_input_amount="1.0"
+                            initial_withdraw_input_coin_type="citadel.monero"
+                            initial_withdraw_output_coin_type="xmr"
+                            initial_withdraw_estimated_input_amount="1.0"
+                            initial_conversion_input_coin_type="citadel.monero"
+                            initial_conversion_output_coin_type="xmr"
+                            initial_conversion_estimated_input_amount="1.0"
+                        />
+                    </div>
+                    <div className="content-block" />
                 </div>
             )
         });
@@ -487,20 +428,9 @@ class AccountDepositWithdraw extends React.Component {
                 return 0;
             });
 
-        let citadelGatewayCoins = this.props.citadelBackedCoins
-            .map(coin => {
-                return coin;
-            })
-            .sort((a, b) => {
-                if (a.symbol < b.symbol) return -1;
-                if (a.symbol > b.symbol) return 1;
-                return 0;
-            });
-
         let services = this.renderServices(
             openLedgerGatewayCoins,
-            rudexGatewayCoins,
-            citadelGatewayCoins
+            rudexGatewayCoins
         );
 
         let options = services.map((services_obj, index) => {
@@ -654,7 +584,7 @@ export default connect(
                     []
                 ),
                 citadelBackedCoins: GatewayStore.getState().backedCoins.get(
-                    "TRADE",
+                    "CITADEL",
                     []
                 ),
                 winexBackedCoins: GatewayStore.getState().backedCoins.get(
