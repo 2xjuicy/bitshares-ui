@@ -41,6 +41,8 @@
         "prepare-electron": "copyfiles -f resources/*.js build/electron/",
         "postbuild-electron": "npm run prepare-electron",
         "postbuild-electron-nougly": "npm run prepare-electron",
+        "build-citadel": "cross-env NODE_ENV=production webpack --env.prod --env.citadel --env.hash --env.baseUrl='/wallet/'",
+        "build-citadel-onion": "cross-env NODE_ENV=production webpack --env.prod --env.citadel --env.hash --env.baseUrl='/wallet/' --env.onion",
         "build-win32": "cross-env NODE_ENV=production && webpack --env.prod --progress --colors &&  echo 'copying to electron/build..' &&  xcopy dist ..\\electron\\build /s /e /y && echo 'done.'",
         "precommit": "pretty-quick --staged",
         "prepackage": "npm run build-electron",
