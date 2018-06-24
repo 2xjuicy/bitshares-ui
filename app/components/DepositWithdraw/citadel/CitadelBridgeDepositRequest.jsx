@@ -18,300 +18,6 @@ import {ChainStore} from "bitsharesjs/es";
 import {getConversionJson} from "common/gatewayMethods";
 import PropTypes from "prop-types";
 
-class ButtonConversion extends React.Component {
-    static propTypes = {
-        balance: ChainTypes.ChainObject,
-        input_coin_type: PropTypes.string.isRequired,
-        output_coin_type: PropTypes.string.isRequired,
-        account_name: PropTypes.string.isRequired,
-        account_id: PropTypes.string.isRequired,
-        url: PropTypes.string.isRequired
-    };
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            error: null,
-            conversion_memo: null,
-
-            // Fee estimation
-            feeStatus: {}
-        };
-
-        this._updateFee = debounce(this._updateFee.bind(this), 150);
-        this._checkFeeStatus = this._checkFeeStatus.bind(this);
-        this._checkBalance = this._checkBalance.bind(this);
-    }
-
-    _getFeeID(props = this.props) {
-        const balance = this._getCurrentBalance(props);
-        const balances = props.account.get("balances");
-        let feeID = balances.has("1.3.0")
-            ? "1.3.0"
-            : balance
-                ? balance.get("asset_type")
-                : "1.3.0";
-        return feeID;
-    }
-
-    componentWillMount() {
-        this._updateFee();
-        this._checkFeeStatus();
-    }
-
-    componentWillUnmount() {
-        this.unMounted = true;
-    }
-
-    componentWillReceiveProps(np) {
-        if (
-            !np.amount.equals(this.props.amount) ||
-            np.account_id !== this.props.account_id
-        ) {
-            this._updateFee();
-        }
-    }
-
-    _updateFee() {
-        const feeID = this._getFeeID();
-        getConversionJson(this.props).then(json => {
-            checkFeeStatusAsync({
-                accountID: this.props.account_id,
-                feeID: feeID,
-                options: ["price_per_kbyte"],
-                data: {
-                    type: "memo",
-                    content: json.inputMemo
-                }
-            }).then(({fee, hasBalance, hasPoolBalance}) => {
-                if (this.unMounted) return;
-
-                this.setState(
-                    {
-                        feeAmount: fee,
-                        hasBalance,
-                        hasPoolBalance,
-                        error: !hasBalance || !hasPoolBalance
-                    },
-                    this._checkFeeStatus
-                );
-            });
-        });
-    }
-
-    _checkFeeStatus(account = this.props.account) {
-        if (!account) return;
-
-        let assets = Object.keys(this.props.account.get("balances").toJS());
-        if (!assets.length) assets = ["1.3.0"];
-        let feeStatus = {};
-        let p = [];
-        getConversionJson(this.props).then(json => {
-            assets.forEach(a => {
-                p.push(
-                    checkFeeStatusAsync({
-                        accountID: account.get("id"),
-                        feeID: a,
-                        options: ["price_per_kbyte"],
-                        data: {
-                            type: "memo",
-                            content: json.inputMemo
-                        }
-                    })
-                );
-            });
-            Promise.all(p)
-                .then(status => {
-                    if (this.unMounted) return;
-
-                    assets.forEach((a, idx) => {
-                        feeStatus[a] = status[idx];
-                    });
-
-                    if (
-                        !utils.are_equal_shallow(
-                            this.state.feeStatus,
-                            feeStatus
-                        )
-                    ) {
-                        this.setState({
-                            feeStatus
-                        });
-                    }
-                    this._checkBalance();
-                })
-                .catch(err => {
-                    console.error(err);
-                });
-        });
-    }
-
-    _getCurrentBalance(props = this.props) {
-        return props.balance;
-    }
-
-    _checkBalance() {
-        const {feeAmount} = this.state;
-        const {asset, amount} = this.props;
-        const balance = this._getCurrentBalance();
-        if (!balance || !feeAmount) return;
-        const hasBalance = checkBalance(
-            amount.getAmount({real: true}),
-            asset,
-            feeAmount,
-            balance
-        );
-        if (hasBalance === null) return;
-        this.setState({balanceError: !hasBalance});
-        return hasBalance;
-    }
-
-    onTrxIncluded(confirm_store_state) {
-        if (
-            confirm_store_state.included &&
-            confirm_store_state.broadcasted_transaction
-        ) {
-            // this.setState(Transfer.getInitialState());
-            TransactionConfirmStore.unlisten(this.onTrxIncluded);
-            TransactionConfirmStore.reset();
-        } else if (confirm_store_state.closed) {
-            TransactionConfirmStore.unlisten(this.onTrxIncluded);
-            TransactionConfirmStore.reset();
-        }
-    }
-
-    onConvert() {
-        const {input_coin_type, output_coin_type, amount} = this.props;
-        const {balanceError} = this.state;
-        getConversionJson(this.props)
-            .then(json => {
-                if (
-                    json.inputCoinType != input_coin_type ||
-                    json.outputCoinType != output_coin_type
-                ) {
-                    throw new Error("unexpected reply from initiate-trade");
-                }
-                if (
-                    input_coin_type == json.inputCoinType &&
-                    output_coin_type == json.outputCoinType &&
-                    !balanceError
-                ) {
-                    this.setState({conversion_memo: json.inputMemo});
-                    this.setState({error: null});
-                    // let precision = utils.get_asset_precision(this.props.asset.get("precision"));
-                    // let amount = this.props.amount.replace( /,/g, "" );
-
-                    AccountActions.transfer(
-                        this.props.account_id,
-                        "1.2.32567",
-                        amount.getAmount(),
-                        this.props.asset.get("id"),
-                        json.inputMemo
-                            ? new Buffer(json.inputMemo, "utf-8")
-                            : "",
-                        null,
-                        this._getFeeID()
-                    )
-                        .then(() => {
-                            TransactionConfirmStore.unlisten(
-                                this.onTrxIncluded
-                            );
-                            TransactionConfirmStore.listen(this.onTrxIncluded);
-                        })
-                        .catch(e => {
-                            let msg = e.message
-                                ? e.message.split("\n")[1]
-                                : null;
-                            console.log("error: ", e, msg);
-                            this.setState({error: msg});
-                        });
-                }
-            })
-            .catch(() => {
-                this.setState({conversion_memo: null});
-            });
-    }
-
-    render() {
-        let button_class = "button disabled";
-        if (
-            Object.keys(this.props.account_balances.toJS()).includes(
-                this.props.asset.get("id")
-            )
-        ) {
-            if (
-                !this.state.balanceError &&
-                this.state.hasBalance &&
-                this.props.amount.getAmount() > 0
-            ) {
-                button_class = "button";
-            }
-        }
-
-        return (
-            <span>
-                <button
-                    className={button_class}
-                    onClick={this.onConvert.bind(this)}
-                >
-                    <Translate content="" />
-                    <Translate content="gateway.convert_now" />
-                </button>
-                {this.state.balanceError ? (
-                    <div style={{paddingTop: 15}} className="has-error">
-                        <Translate content="transfer.errors.insufficient" />
-                    </div>
-                ) : null}
-            </span>
-        );
-    }
-}
-
-ButtonConversion = BindToChainState(ButtonConversion);
-
-class ButtonConversionContainer extends React.Component {
-    static propTypes = {
-        asset: ChainTypes.ChainAsset.isRequired,
-        input_coin_type: PropTypes.string.isRequired,
-        output_coin_type: PropTypes.string.isRequired,
-        account_name: PropTypes.string.isRequired,
-        account_id: PropTypes.string.isRequired,
-        url: PropTypes.string.isRequired
-    };
-
-    render() {
-        let conversion_button = (
-            <ButtonConversion
-                asset={this.props.asset}
-                account={this.props.account}
-                input_coin_type={this.props.input_coin_type}
-                output_coin_type={this.props.output_coin_type}
-                account_name={this.props.account_name}
-                amount={
-                    new Asset({
-                        real: this.props.amount,
-                        asset_id: this.props.asset.get("id"),
-                        precision: this.props.asset.get("precision")
-                    })
-                }
-                account_id={this.props.account_id}
-                account_balances={this.props.account_balances}
-                url={this.props.url}
-                balance={
-                    this.props.account.get("balances").toJS()[
-                        this.props.asset.get("id")
-                    ]
-                }
-            />
-        );
-
-        return <span>{conversion_button}</span>;
-    }
-}
-
-ButtonConversionContainer = BindToChainState(ButtonConversionContainer);
-
 class ButtonWithdraw extends React.Component {
     static propTypes = {
         balance: ChainTypes.ChainObject,
@@ -441,10 +147,7 @@ class CitadelBridgeDepositRequest extends React.Component {
         initial_deposit_estimated_input_amount: PropTypes.string,
         initial_withdraw_input_coin_type: PropTypes.string,
         initial_withdraw_output_coin_type: PropTypes.string,
-        initial_withdraw_estimated_input_amount: PropTypes.string,
-        initial_conversion_input_coin_type: PropTypes.string,
-        initial_conversion_output_coin_type: PropTypes.string,
-        initial_conversion_estimated_input_amount: PropTypes.string
+        initial_withdraw_estimated_input_amount: PropTypes.string
     };
 
     constructor(props) {
@@ -492,16 +195,6 @@ class CitadelBridgeDepositRequest extends React.Component {
             withdraw_error: null,
             failed_calculate_withdraw: null,
 
-            // things that get displayed for conversions
-            conversion_input_coin_type: null,
-            conversion_output_coin_type: null,
-            conversion_estimated_input_amount:
-                this.props.initial_conversion_estimated_input_amount || "1.0",
-            conversion_estimated_output_amount: null,
-            conversion_limit: null,
-            conversion_error: null,
-            failed_calculate_conversion: null,
-
             // input address-related
             coin_info_request_state: this.coin_info_request_states
                 .request_in_progress,
@@ -519,8 +212,6 @@ class CitadelBridgeDepositRequest extends React.Component {
             coins_by_type: null,
             allowed_mappings_for_deposit: null,
             allowed_mappings_for_withdraw: null,
-            allowed_mappings_for_conversion: null,
-            conversion_memo: null,
 
             // announcements data
             announcements: []
@@ -580,7 +271,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                 // determine which mappings we will display for deposits and withdrawals
                 let allowed_mappings_for_deposit = {}; // all non-bts to bts
                 let allowed_mappings_for_withdraw = {}; // all bts to non-bts
-                let allowed_mappings_for_conversion = {}; // all bts to bts
                 trading_pairs.forEach(pair => {
                     let input_coin_info = coins_by_type[pair.inputCoinType];
                     let output_coin_info = coins_by_type[pair.outputCoinType];
@@ -669,8 +359,6 @@ class CitadelBridgeDepositRequest extends React.Component {
 
                 let withdraw_input_coin_type = null;
                 let withdraw_output_coin_type = null;
-                let conversion_input_coin_type = null;
-                let conversion_output_coin_type = null;
                 let allowed_withdraw_coin_types = Object.keys(
                     allowed_mappings_for_withdraw
                 );
@@ -704,43 +392,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                             output_coin_types_for_this_input[0];
                 }
 
-                let allowed_conversion_coin_types = Object.keys(
-                    allowed_mappings_for_conversion
-                );
-                allowed_conversion_coin_types.forEach(conversion_coin_type => {
-                    allowed_mappings_for_conversion[
-                        conversion_coin_type
-                    ].sort();
-                });
-
-                if (allowed_conversion_coin_types.length) {
-                    if (
-                        this.props.initial_conversion_input_coin_type &&
-                        this.props.initial_conversion_input_coin_type in
-                            allowed_mappings_for_conversion
-                    )
-                        conversion_input_coin_type = this.props
-                            .initial_conversion_input_coin_type;
-                    else
-                        conversion_input_coin_type =
-                            allowed_conversion_coin_types[0];
-                    let output_coin_types_for_this_input =
-                        allowed_mappings_for_conversion[
-                            conversion_input_coin_type
-                        ];
-                    if (
-                        this.props.initial_conversion_output_coin_type &&
-                        output_coin_types_for_this_input.indexOf(
-                            this.props.initial_conversion_output_coin_type
-                        ) != -1
-                    )
-                        conversion_output_coin_type = this.props
-                            .initial_conversion_output_coin_type;
-                    else
-                        conversion_output_coin_type =
-                            output_coin_types_for_this_input[0];
-                }
-
                 let input_address_and_memo = this.getCachedOrGeneratedInputAddress(
                     deposit_input_coin_type,
                     deposit_output_coin_type
@@ -770,18 +421,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                     withdraw_output_coin_type
                 );
 
-                let conversion_estimated_output_amount = this.getAndUpdateOutputEstimate(
-                    "conversion",
-                    conversion_input_coin_type,
-                    conversion_output_coin_type,
-                    this.state.conversion_estimated_input_amount
-                );
-                let conversion_limit = this.getCachedOrFreshDepositLimit(
-                    "conversion",
-                    conversion_input_coin_type,
-                    conversion_output_coin_type
-                );
-
                 if (this.unMounted) return;
 
                 this.setState({
@@ -790,7 +429,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                     coins_by_type: coins_by_type,
                     allowed_mappings_for_deposit: allowed_mappings_for_deposit,
                     allowed_mappings_for_withdraw: allowed_mappings_for_withdraw,
-                    allowed_mappings_for_conversion: allowed_mappings_for_conversion,
                     deposit_input_coin_type: deposit_input_coin_type,
                     deposit_output_coin_type: deposit_output_coin_type,
                     input_address_and_memo: input_address_and_memo,
@@ -802,13 +440,7 @@ class CitadelBridgeDepositRequest extends React.Component {
                     withdraw_output_coin_type: withdraw_output_coin_type,
                     withdraw_limit: withdraw_limit,
                     withdraw_estimated_output_amount: withdraw_estimated_output_amount,
-                    conversion_input_coin_type: conversion_input_coin_type,
-                    conversion_output_coin_type: conversion_output_coin_type,
-                    conversion_limit: conversion_limit,
-                    conversion_estimated_output_amount: conversion_estimated_output_amount,
                     withdraw_estimate_direction: this.estimation_directions
-                        .output_from_input,
-                    conversion_estimate_direction: this.estimation_directions
                         .output_from_input,
                     supports_output_memos:
                         coins_by_type["xmr"].supportsOutputMemos
@@ -819,8 +451,7 @@ class CitadelBridgeDepositRequest extends React.Component {
                     coin_info_request_state: state_coin_info,
                     coins_by_type: null,
                     allowed_mappings_for_deposit: null,
-                    allowed_mappings_for_withdraw: null,
-                    allowed_mappings_for_conversion: null
+                    allowed_mappings_for_withdraw: null
                 });
             });
     }
@@ -894,34 +525,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                     new_withdraw_estimated_output_amount
                 );
 
-            let new_conversion_limit = this.getCachedOrFreshDepositLimit(
-                "conversion",
-                this.state.conversion_input_coin_type,
-                this.state.conversion_output_coin_type
-            );
-            let new_conversion_estimated_input_amount = this.state
-                .conversion_estimated_input_amount;
-            let new_conversion_estimated_output_amount = this.state
-                .conversion_estimated_output_amount;
-
-            if (
-                this.state.conversion_estimate_direction ==
-                this.estimation_directions.output_from_input
-            )
-                new_conversion_estimated_output_amount = this.getAndUpdateOutputEstimate(
-                    "conversion",
-                    this.state.conversion_input_coin_type,
-                    this.state.conversion_output_coin_type,
-                    new_conversion_estimated_input_amount
-                );
-            else
-                new_conversion_estimated_input_amount = this.getAndUpdateinputEstimate(
-                    "conversion",
-                    this.state.conversion_input_coin_type,
-                    this.state.conversion_output_coin_type,
-                    new_conversion_estimated_output_amount
-                );
-
             this.setState({
                 input_address_and_memo: new_input_address_and_memo,
                 deposit_limit: new_deposit_limit,
@@ -930,9 +533,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                 withdraw_limit: new_withdraw_limit,
                 withdraw_estimated_input_amount: new_withdraw_estimated_input_amount,
                 withdraw_estimated_output_amount: new_withdraw_estimated_output_amount,
-                conversion_limit: new_conversion_limit,
-                conversion_estimated_input_amount: new_conversion_estimated_input_amount,
-                conversion_estimated_output_amount: new_conversion_estimated_output_amount,
                 key_for_withdrawal_dialog: new_withdraw_estimated_input_amount
             });
         }
@@ -995,8 +595,7 @@ class CitadelBridgeDepositRequest extends React.Component {
                     coin_info_request_state: 0,
                     coins_by_type: null,
                     allowed_mappings_for_deposit: null,
-                    allowed_mappings_for_withdraw: null,
-                    allowed_mappings_for_conversion: null
+                    allowed_mappings_for_withdraw: null
                 });
             });
     }
@@ -1042,7 +641,9 @@ class CitadelBridgeDepositRequest extends React.Component {
             input_coin_type,
             output_coin_type
         );
-        if (cached_input_address_and_memo) return cached_input_address_and_memo;
+        if (cached_input_address_and_memo) {
+            return cached_input_address_and_memo;
+        }
 
         // if we've already asked for this address, return null, it will trigger a refresh when it completes
         this.state.input_address_requests_in_progress[input_coin_type] =
@@ -1266,9 +867,6 @@ class CitadelBridgeDepositRequest extends React.Component {
         if (deposit_withdraw_or_convert == "withdraw") {
             this.setState({failed_calculate_withdraw: null});
         }
-        if (deposit_withdraw_or_convert == "conversion") {
-            this.setState({failed_calculate_conversion: null});
-        }
 
         let estimate_output_url =
             this.state.url +
@@ -1314,12 +912,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                                 failed_calculate_withdraw: "Failed to calculate"
                             });
                         }
-                        if (deposit_withdraw_or_convert == "conversion") {
-                            this.setState({
-                                failed_calculate_conversion:
-                                    "Failed to calculate"
-                            });
-                        }
 
                         let expected_prefix = "Internal Server Error: ";
                         if (user_message.startsWith(expected_prefix))
@@ -1343,10 +935,13 @@ class CitadelBridgeDepositRequest extends React.Component {
                         reply.inputCoinType != input_coin_type ||
                         reply.outputCoinType != output_coin_type ||
                         reply.inputAmount != input_amount
-                    )
-                        throw Error(
-                            "unexpected reply from estimate-output-amount"
-                        );
+                    ) {
+                        this.setState({
+                            [deposit_withdraw_or_convert +
+                            "_estimated_output_amount"]: reply.outputAmount,
+                            [deposit_withdraw_or_convert + "_error"]: null
+                        });
+                    }
                     if (
                         this.state[
                             deposit_withdraw_or_convert + "_input_coin_type"
@@ -1361,12 +956,13 @@ class CitadelBridgeDepositRequest extends React.Component {
                         this.state[
                             deposit_withdraw_or_convert + "_estimate_direction"
                         ] == this.estimation_directions.output_from_input
-                    )
+                    ) {
                         this.setState({
                             [deposit_withdraw_or_convert +
                             "_estimated_output_amount"]: reply.outputAmount,
                             [deposit_withdraw_or_convert + "_error"]: null
                         });
+                    }
                 }
             },
             error => {}
@@ -1387,9 +983,6 @@ class CitadelBridgeDepositRequest extends React.Component {
         }
         if (deposit_withdraw_or_convert == "withdraw") {
             this.setState({failed_calculate_withdraw: null});
-        }
-        if (deposit_withdraw_or_convert == "conversion") {
-            this.setState({failed_calculate_conversion: null});
         }
 
         let estimate_input_url =
@@ -1427,11 +1020,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                     if (deposit_withdraw_or_convert == "withdraw") {
                         this.setState({
                             failed_calculate_withdraw: "Failed to calculate"
-                        });
-                    }
-                    if (deposit_withdraw_or_convert == "conversion") {
-                        this.setState({
-                            failed_calculate_conversion: "Failed to calculate"
                         });
                     }
                 }
@@ -2197,228 +1785,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                 );
             }
 
-            if (
-                Object.getOwnPropertyNames(
-                    this.state.allowed_mappings_for_conversion
-                ).length > 0
-            ) {
-                // conversion
-                let conversion_input_coin_type_options = [];
-                Object.keys(this.state.allowed_mappings_for_conversion)
-                    .sort()
-                    .forEach(allowed_conversion_input_coin_type => {
-                        conversion_input_coin_type_options.push(
-                            <option
-                                key={allowed_conversion_input_coin_type}
-                                value={allowed_conversion_input_coin_type}
-                            >
-                                {
-                                    this.state.coins_by_type[
-                                        allowed_conversion_input_coin_type
-                                    ].walletSymbol
-                                }
-                            </option>
-                        );
-                    });
-                let conversion_input_coin_type_select = (
-                    <select
-                        style={{width: "11rem"}}
-                        className="native-coin-types"
-                        value={this.state.conversion_input_coin_type}
-                        onChange={this.onInputCoinTypeChanged.bind(
-                            this,
-                            "conversion"
-                        )}
-                    >
-                        {conversion_input_coin_type_options}
-                    </select>
-                );
-
-                let conversion_output_coin_type_options = [];
-                let conversion_output_coin_types = this.state
-                    .allowed_mappings_for_conversion[
-                    this.state.conversion_input_coin_type
-                ];
-                conversion_output_coin_types.forEach(
-                    allowed_conversion_output_coin_type => {
-                        conversion_output_coin_type_options.push(
-                            <option
-                                key={allowed_conversion_output_coin_type}
-                                value={allowed_conversion_output_coin_type}
-                            >
-                                {
-                                    this.state.coins_by_type[
-                                        allowed_conversion_output_coin_type
-                                    ].symbol
-                                }
-                            </option>
-                        );
-                    }
-                );
-                let conversion_output_coin_type_select = (
-                    <select
-                        style={{width: "11rem"}}
-                        className="external-coin-types"
-                        value={this.state.conversion_output_coin_type}
-                        onChange={this.onOutputCoinTypeChanged.bind(
-                            this,
-                            "conversion"
-                        )}
-                    >
-                        {conversion_output_coin_type_options}
-                    </select>
-                );
-
-                let estimated_input_amount_text = this.state
-                    .conversion_estimated_input_amount;
-
-                let conversion_input_amount_edit_box = estimated_input_amount_text ? (
-                    <input
-                        style={{width: "11rem"}}
-                        type="text"
-                        value={estimated_input_amount_text || ""}
-                        onChange={this.onInputAmountChanged.bind(
-                            this,
-                            "conversion"
-                        )}
-                    />
-                ) : (
-                    calcTextConversion
-                );
-
-                let estimated_output_amount_text = this.state
-                    .conversion_estimated_output_amount;
-
-                let conversion_output_amount_edit_box = estimated_output_amount_text ? (
-                    <input
-                        style={{width: "11rem"}}
-                        type="text"
-                        value={estimated_output_amount_text || ""}
-                        onChange={this.onOutputAmountChanged.bind(
-                            this,
-                            "conversion"
-                        )}
-                    />
-                ) : (
-                    calcTextConversion
-                );
-
-                let conversion_button = (
-                    <ButtonConversionContainer
-                        asset={
-                            this.state.coins_by_type[
-                                this.state.conversion_input_coin_type
-                            ].walletSymbol
-                        }
-                        account={this.props.account}
-                        input_coin_type={this.state.conversion_input_coin_type}
-                        output_coin_type={
-                            this.state.conversion_output_coin_type
-                        }
-                        account_name={this.props.account.get("name")}
-                        amount={this.state.conversion_estimated_input_amount}
-                        account_id={this.props.account.get("id")}
-                        account_balances={this.props.account.get("balances")}
-                        url={this.state.url}
-                    />
-                );
-
-                let conversion_error_element = null;
-                if (this.state.conversion_error)
-                    conversion_error_element = (
-                        <div>{this.state.conversion_error}</div>
-                    );
-
-                let conversion_limit_element = <span>...</span>;
-                if (this.state.conversion_limit) {
-                    if (this.state.conversion_limit.limit)
-                        conversion_limit_element = (
-                            <div className="blocktrades-bridge">
-                                <span className="deposit-limit">
-                                    <Translate
-                                        content="gateway.limit"
-                                        amount={utils.format_number(
-                                            this.state.conversion_limit.limit,
-                                            8
-                                        )}
-                                        symbol={
-                                            this.state.coins_by_type[
-                                                this.state
-                                                    .conversion_input_coin_type
-                                            ].walletSymbol
-                                        }
-                                    />
-                                </span>
-                            </div>
-                        );
-                    else
-                        conversion_limit_element = (
-                            <div className="blocktrades-bridge">
-                                <span className="deposit-limit">no limit</span>
-                            </div>
-                        );
-                }
-
-                conversion_header = (
-                    <thead>
-                        <tr>
-                            <th>
-                                <Translate content="gateway.convert" />
-                            </th>
-                            <th>
-                                <Translate content="gateway.balance" />
-                            </th>
-                            <th />
-                        </tr>
-                    </thead>
-                );
-
-                conversion_body = (
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div className="blocktrades-bridge">
-                                    <div className="inline-block">
-                                        <div>
-                                            {conversion_input_coin_type_select}
-                                        </div>
-                                        <div>
-                                            {conversion_input_amount_edit_box}
-                                        </div>
-                                    </div>
-                                    &rarr;
-                                    <div className="inline-block">
-                                        <div>
-                                            {conversion_output_coin_type_select}
-                                        </div>
-                                        <div>
-                                            {conversion_output_amount_edit_box}
-                                        </div>
-                                    </div>
-                                    <div>{conversion_error_element}</div>
-                                </div>
-                            </td>
-                            <td>
-                                <AccountBalance
-                                    account={this.props.account.get("name")}
-                                    asset={
-                                        this.state.coins_by_type[
-                                            this.state
-                                                .conversion_input_coin_type
-                                        ].walletSymbol
-                                    }
-                                />
-                            </td>
-                            <td>
-                                {conversion_button}
-                                <br />
-                                {conversion_limit_element}
-                            </td>
-                        </tr>
-                    </tbody>
-                );
-            }
-
             if (this.state.announcements.length > 0) {
                 announcements = (
                     <div className="blocktrades-announcements-container">
@@ -2468,8 +1834,6 @@ class CitadelBridgeDepositRequest extends React.Component {
                         {deposit_body}
                         {withdraw_header}
                         {withdraw_body}
-                        {conversion_header}
-                        {conversion_body}
                     </table>
                 </div>
             );

@@ -363,9 +363,6 @@ class AccountDepositWithdraw extends React.Component {
                             initial_withdraw_input_coin_type="citadel.monero"
                             initial_withdraw_output_coin_type="xmr"
                             initial_withdraw_estimated_input_amount="1.0"
-                            initial_conversion_input_coin_type="citadel.monero"
-                            initial_conversion_output_coin_type="xmr"
-                            initial_conversion_estimated_input_amount="1.0"
                         />
                     </div>
                     <div className="content-block" />

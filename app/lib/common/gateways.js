@@ -8,8 +8,8 @@ import {
     widechainAPIs,
     openledgerAPIs,
     cryptoBridgeAPIs,
-    gdex2APIs,
-    citadelAPIs
+    citadelAPIs,
+    gdex2APIs
 } from "api/apiConfig";
 
 export const availableGateways = {
