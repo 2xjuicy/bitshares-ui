@@ -15,7 +15,7 @@ import {
     getDepositLimit,
     estimateOutput,
     estimateInput
-} from "common/blockTradesMethods";
+} from "common/gatewayMethods";
 import BlockTradesDepositAddressCache from "common/BlockTradesDepositAddressCache";
 import CopyButton from "../Utility/CopyButton";
 import Icon from "../Icon/Icon";
@@ -211,7 +211,6 @@ class SimpleDepositBlocktradesBridge extends React.Component {
         );*/
         if (!receive_address) {
             this.setState({receive_address: null});
-            console.log("SUKAPIZDA");
             requestDepositAddress(this._getDepositObject(props));
         } else {
             this.setState({
@@ -351,6 +350,7 @@ class SimpleDepositBlocktradesBridge extends React.Component {
                             &nbsp;<Icon
                                 style={{position: "relative", top: 0}}
                                 name="question-circle"
+                                title="icons.question_circle"
                             />
                         </span>
                     </div>
@@ -378,7 +378,10 @@ class SimpleDepositBlocktradesBridge extends React.Component {
                                                 "tooltip.over_limit"
                                             )}
                                         >
-                                            <Translate content="gateway.over_limit" />&nbsp;<Icon name="question-circle" />
+                                            <Translate content="gateway.over_limit" />&nbsp;<Icon
+                                                name="question-circle"
+                                                title="icons.question_circle"
+                                            />
                                         </div>
                                     ) : null}
                                 </div>
@@ -611,7 +614,7 @@ class SimpleDepositBlocktradesBridge extends React.Component {
                         : parseInt(currentBalance.get("balance"), 10)
                 )}
             >
-                <Icon name="clippy" />
+                <Icon name="clippy" title="icons.clippy.withdraw_full" />
             </button>
         );
 
