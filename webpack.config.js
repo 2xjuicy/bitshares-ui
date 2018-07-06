@@ -79,7 +79,6 @@ module.exports = function(env) {
             ),
             __TESTNET__: !!env.testnet,
             __DEPRECATED__: !!env.deprecated,
-            __ONION__: !!env.onion,
             DEFAULT_SYMBOL: "BTS",
             __GIT_BRANCH__: JSON.stringify(git.branch())
         }),
@@ -102,14 +101,11 @@ module.exports = function(env) {
         // PROD OUTPUT PATH
         let outputDir = env.electron
             ? "electron"
-            : env.citadel
-                ? "citadel"
-                : env.hash
-                    ? `hash-history_${baseUrl.replace("/", "")}`
-                    : "dist";
-        if (env.onion) {
-            outputDir += "_onion";
-        }
+            : env.hash
+                ? !baseUrl
+                    ? "hash-history"
+                    : `hash-history_${baseUrl.replace("/", "")}`
+                : "dist";
         outputPath = path.join(root_dir, "build", outputDir);
 
         // DIRECTORY CLEANER

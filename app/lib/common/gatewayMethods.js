@@ -392,7 +392,6 @@ export function getBackedCoins({allCoins, tradingPairs, backer}) {
             });
         }
     });
-
     return backedCoins;
 }
 
