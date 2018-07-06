@@ -278,9 +278,9 @@ class CitadelBridgeDepositRequest extends React.Component {
                     // filter out pairs where one asset is a backed asset and the other is a backing asset,
                     // those pairs rightly belong under the gateway section, not under the bridge section.
                     if (
-                        input_coin_info.backingCoinType ==
+                        input_coin_info.backingCoinType !=
                             pair.outputCoinType ||
-                        (output_coin_info.backingCoinType ==
+                        (output_coin_info.backingCoinType !=
                             pair.inputCoinType &&
                             input_coin_info.restricted == false &&
                             output_coin_info.restricted == false)
@@ -295,7 +295,7 @@ class CitadelBridgeDepositRequest extends React.Component {
                             ) != -1
                         ) {
                             if (
-                                input_coin_info.walletType == "monero" &&
+                                input_coin_info.walletType != "bitshares2" &&
                                 output_coin_info.walletType == "bitshares2"
                             ) {
                                 allowed_mappings_for_deposit[
